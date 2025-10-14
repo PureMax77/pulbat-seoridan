@@ -1829,6 +1829,133 @@ export const ranks: FilterOption[] = [
   },
 ];
 
+// 지역 코드 데이터
+export const countryCodes: FilterOption[] = [
+  {
+    code: "1101",
+    name: "서울",
+  },
+  {
+    code: "2100",
+    name: "부산",
+  },
+  {
+    code: "2200",
+    name: "대구",
+  },
+  {
+    code: "2300",
+    name: "인천",
+  },
+  {
+    code: "2401",
+    name: "광주",
+  },
+  {
+    code: "2501",
+    name: "대전",
+  },
+  {
+    code: "2601",
+    name: "울산",
+  },
+  {
+    code: "3111",
+    name: "수원",
+  },
+  {
+    code: "3214",
+    name: "강릉",
+  },
+  {
+    code: "3211",
+    name: "춘천",
+  },
+  {
+    code: "3311",
+    name: "청주",
+  },
+  {
+    code: "3511",
+    name: "전주",
+  },
+  {
+    code: "3711",
+    name: "포항",
+  },
+  {
+    code: "3911",
+    name: "제주",
+  },
+  {
+    code: "3113",
+    name: "의정부",
+  },
+  {
+    code: "3613",
+    name: "순천",
+  },
+  {
+    code: "3714",
+    name: "안동",
+  },
+  {
+    code: "3814",
+    name: "창원",
+  },
+  {
+    code: "3145",
+    name: "용인",
+  },
+  {
+    code: "2701",
+    name: "세종",
+  },
+  {
+    code: "3112",
+    name: "성남",
+  },
+  {
+    code: "3138",
+    name: "고양",
+  },
+  {
+    code: "3411",
+    name: "천안",
+  },
+  {
+    code: "3818",
+    name: "김해",
+  },
+];
+
+// 소매가격 선택가능 지역
+export const retailCountryCodes: FilterOption[] = countryCodes;
+
+// 도매가격 선택가능 지역 (서울, 부산, 대구, 광주, 대전)
+export const wholesaleCountryCodes: FilterOption[] = [
+  {
+    code: "1101",
+    name: "서울",
+  },
+  {
+    code: "2100",
+    name: "부산",
+  },
+  {
+    code: "2200",
+    name: "대구",
+  },
+  {
+    code: "2401",
+    name: "광주",
+  },
+  {
+    code: "2501",
+    name: "대전",
+  },
+];
+
 export type QueryCombo = {
   p_itemcategorycode: string;
   p_itemcode: string;
@@ -4538,12 +4665,14 @@ export function buildQuery(params: {
   item?: FilterOption | null;
   kind?: FilterOption | null;
   rank?: FilterOption | null;
+  countryCode?: FilterOption | null;
 }) {
   return {
     p_itemcategorycode: params.category?.code ?? "",
     p_itemcode: params.item?.code ?? "",
     p_kindcode: params.kind?.code ?? "",
     p_productrankcode: params.rank?.code ?? "",
+    p_countrycode: params.countryCode?.code ?? "",
   };
 }
 
@@ -4560,4 +4689,26 @@ export function getKinds(itemCode?: string | null) {
 // Convenience: flat key "cat|item|kind"
 export function getRetailRanksByKey(key: string) {
   return comboRetailRanksFlat[key] ?? ranks;
+}
+
+// 지역 코드 관련 함수들
+export function getCountryCodes(priceType: 'retail' | 'wholesale' = 'retail'): FilterOption[] {
+  return priceType === 'wholesale' ? wholesaleCountryCodes : retailCountryCodes;
+}
+
+export function getCountryCodeByCode(code: string): FilterOption | undefined {
+  return countryCodes.find(country => country.code === code);
+}
+
+export function getCountryCodeByName(name: string): FilterOption | undefined {
+  return countryCodes.find(country => country.name === name);
+}
+
+export function isValidCountryCode(code: string, priceType: 'retail' | 'wholesale' = 'retail'): boolean {
+  const validCodes = getCountryCodes(priceType);
+  return validCodes.some(country => country.code === code);
+}
+
+export function getDefaultCountryCode(): string {
+  return ''; // 전체지역이 기본값
 }
