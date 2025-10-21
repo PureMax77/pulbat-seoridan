@@ -9,8 +9,8 @@ export function AppLayout({ children }: AppLayoutProps) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-blue-50 flex justify-center">
       {/* 좌측 사이드바 - 넓은 화면에서만 표시 */}
-      <aside className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-center lg:px-8 lg:pt-8">
-        <div className="w-full max-w-md sticky top-8">
+      <aside className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-center sticky top-0 h-screen">
+        <div className="w-full max-w-md">
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 p-8 space-y-6">
             {/* 로고 & 타이틀 */}
             <div className="flex items-center gap-3">
