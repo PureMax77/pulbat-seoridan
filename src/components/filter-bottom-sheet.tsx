@@ -27,7 +27,11 @@ export function FilterBottomSheet({
   filters,
   onApplyFilters,
 }: FilterBottomSheetProps) {
-  const [localFilters, setLocalFilters] = useState<FilterState>(filters);
+  // 과일류를 초기값으로 설정
+  const defaultFilters: FilterState = {
+    category: { code: "400", name: "과일류" }
+  };
+  const [localFilters, setLocalFilters] = useState<FilterState>(filters.category ? filters : defaultFilters);
   const [activeTab, setActiveTab] = useState<"region" | "product">("region");
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
     new Set(["region", "category"])
@@ -108,7 +112,7 @@ export function FilterBottomSheet({
   };
 
   const handleReset = () => {
-    setLocalFilters({});
+    setLocalFilters(defaultFilters);
   };
 
   const getAvailableRanks = () => {
@@ -220,17 +224,6 @@ export function FilterBottomSheet({
 
                   {expandedSections.has("category") && (
                     <div className="grid grid-cols-2 gap-2">
-                      <button
-                        onClick={() => updateFilter("category", undefined)}
-                        className={cn(
-                          "p-3 text-sm rounded-lg border text-left transition-colors",
-                          !localFilters.category
-                            ? "bg-blue-50 border-blue-200 text-blue-800"
-                            : "bg-gray-50 border-gray-200 text-gray-700 hover:bg-gray-100"
-                        )}
-                      >
-                        전체 부류
-                      </button>
                       {categories.map((category) => (
                         <button
                           key={category.code}
