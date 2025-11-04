@@ -44,42 +44,37 @@ interface KamisApiResponse {
 
 export default function MarketPage() {
   const [filters, setFilters] = useState<FilterState>({
-    category: { code: "400", name: "과일류" }
+    category: { code: "all", name: "전체 부류" }
   });
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [allPriceData, setAllPriceData] = useState<PriceItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isFilterExpanded, setIsFilterExpanded] = useState(true);
 
-  // API 재요청이 필요한 필터 (지역, 부류)
+  // API 재요청이 필요한 필터 (지역만)
   const apiFilters = useMemo(() => ({
     countryCode: filters.countryCode?.code,
-    categoryCode: filters.category?.code,
-  }), [filters.countryCode, filters.category]);
+  }), [filters.countryCode]);
 
   // API 재요청이 필요한 필터가 변경되면 데이터 다시 가져오기
   useEffect(() => {
     fetchPriceData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiFilters.countryCode, apiFilters.categoryCode]);
+  }, [apiFilters.countryCode]);
 
   const fetchPriceData = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      // API URL에 필터 파라미터 추가
+      // API URL에 필터 파라미터 추가 (지역만)
       const params = new URLSearchParams();
-      if (apiFilters.categoryCode) {
-        params.set("p_category_code", apiFilters.categoryCode);
-      }
       if (apiFilters.countryCode) {
         params.set("p_country_code", apiFilters.countryCode);
       }
 
       const url = `/api/market/day-price${params.toString() ? `?${params.toString()}` : ''}`;
-      console.log('API 요청 URL:', url);
-
       const response = await fetch(url);
 
       if (!response.ok) {
@@ -87,7 +82,6 @@ export default function MarketPage() {
       }
 
       const data: KamisApiResponse = await response.json();
-      console.log(123, data)
       setAllPriceData(data.data.item);
     } catch (err) {
       setError(err instanceof Error ? err.message : "알 수 없는 오류가 발생했습니다.");
@@ -97,9 +91,65 @@ export default function MarketPage() {
     }
   };
 
-  // 클라이언트 측 필터링 (품목, 품종, 등급)
+  // API 데이터에서 실제로 존재하는 필터 옵션 추출
+  const availableFilterOptions = useMemo(() => {
+    const items = new Map<string, { code: string; name: string; categoryCode: string }>();
+    const kinds = new Map<string, { code: string; name: string; itemCode: string }>();
+    const ranks = new Map<string, { code: string; name: string; itemCode: string; kindCode: string }>();
+
+    allPriceData.forEach(item => {
+      // 품목 추출
+      const itemKey = `${item.item_code}`;
+      if (!items.has(itemKey)) {
+        const categoryCode = item.item_code.charAt(0) + "00";
+        items.set(itemKey, {
+          code: item.item_code,
+          name: item.item_name,
+          categoryCode: categoryCode
+        });
+      }
+
+      // 품종 추출
+      const kindKey = `${item.item_code}|${item.kind_code}`;
+      if (!kinds.has(kindKey)) {
+        kinds.set(kindKey, {
+          code: item.kind_code,
+          name: item.kind_name,
+          itemCode: item.item_code
+        });
+      }
+
+      // 등급 추출 (품목, 품종 정보 포함)
+      const rankKey = `${item.item_code}|${item.kind_code}|${item.rank_code}|${item.rank}`;
+      if (!ranks.has(rankKey)) {
+        ranks.set(rankKey, {
+          code: item.rank_code,
+          name: item.rank,
+          itemCode: item.item_code,
+          kindCode: item.kind_code
+        });
+      }
+    });
+
+    return {
+      items: Array.from(items.values()),
+      kinds: Array.from(kinds.values()),
+      ranks: Array.from(ranks.values())
+    };
+  }, [allPriceData]);
+
+  // 클라이언트 측 필터링 (부류, 품목, 품종, 등급)
   const filteredPriceData = useMemo(() => {
     let filtered = [...allPriceData];
+
+    // 부류 필터링 (전체 부류가 아닌 경우에만)
+    if (filters.category && filters.category.code !== "all") {
+      filtered = filtered.filter(item => {
+        // item_code의 첫 번째 자리로 부류 판단 (예: 111 -> 100, 211 -> 200)
+        const categoryCode = item.item_code.charAt(0) + "00";
+        return categoryCode === filters.category!.code;
+      });
+    }
 
     // 품목 필터링
     if (filters.item) {
@@ -113,11 +163,25 @@ export default function MarketPage() {
 
     // 등급 필터링
     if (filters.rank) {
-      filtered = filtered.filter(item => item.rank_code === filters.rank!.code);
+      // rank_code를 정규화하여 비교 (앞의 0 제거)
+      const normalizeCode = (code: string) => {
+        const num = parseInt(code, 10);
+        return isNaN(num) ? code : String(num);
+      };
+      const selectedCode = normalizeCode(filters.rank.code);
+      const selectedName = filters.rank.name;
+
+      filtered = filtered.filter(item => {
+        const itemCode = normalizeCode(item.rank_code);
+        // 코드로 비교하거나, 이름으로 비교
+        const matchByCode = itemCode === selectedCode;
+        const matchByName = item.rank === selectedName;
+        return matchByCode || matchByName;
+      });
     }
 
     return filtered;
-  }, [allPriceData, filters.item, filters.kind, filters.rank]);
+  }, [allPriceData, filters.category, filters.item, filters.kind, filters.rank]);
 
   const handleFilterChange = (newFilters: FilterState) => {
     setFilters(newFilters);
@@ -135,6 +199,14 @@ export default function MarketPage() {
     setFilters(newFilters);
   };
 
+  // 실제로 표시되는 필터 칩이 있는지 확인
+  const hasVisibleFilters =
+    filters.countryCode !== undefined ||
+    (filters.category !== undefined && filters.category.code !== "all") ||
+    filters.item !== undefined ||
+    filters.kind !== undefined ||
+    filters.rank !== undefined;
+
   // 가격 포맷팅 함수
   const formatPrice = (price: string) => {
     if (!price || price === "-") return "가격 정보 없음";
@@ -147,16 +219,20 @@ export default function MarketPage() {
   return (
     <AppLayout>
       <div className="min-h-screen bg-gray-50">
-        {/* 필터 영역 */}
-        <div className="bg-white border-b sticky top-0 z-10">
-          <div className="max-w-4xl mx-auto p-4">
+        {/* 필터 영역 - 고정 (헤더 아래) */}
+        <div className="fixed top-[69px] left-0 right-0 bg-white border-b z-30 lg:left-1/2 lg:-translate-x-1/2 lg:w-[420px]">
+          <div className="px-4 py-2">
             <FilterBar
               filters={filters}
               onFilterChange={handleFilterChange}
               onOpenBottomSheet={handleOpenBottomSheet}
+              onExpandedChange={setIsFilterExpanded}
             />
           </div>
         </div>
+
+        {/* 필터 영역 높이만큼 여백 추가 */}
+        <div className={isFilterExpanded && hasVisibleFilters ? "h-[7.5rem]" : "h-12"}></div>
 
         {/* 메인 콘텐츠 */}
         <div className="max-w-4xl mx-auto p-4">
@@ -194,13 +270,7 @@ export default function MarketPage() {
           ) : (
             <div className="space-y-3 pb-6">
               <div className="mb-4">
-                <h1 className="text-2xl font-bold text-gray-800">오늘의 농산물 가격</h1>
-                <p className="text-sm text-gray-500 mt-1">
-                  총 {filteredPriceData.length}개 품목
-                  {allPriceData.length !== filteredPriceData.length && (
-                    <span className="text-blue-500"> (전체 {allPriceData.length}개 중)</span>
-                  )}
-                </p>
+                <h1 className="text-2xl font-bold text-gray-800">오늘의 농산물 소매가</h1>
               </div>
 
               {filteredPriceData.map((item, index) => (
@@ -247,6 +317,9 @@ export default function MarketPage() {
           onClose={handleCloseBottomSheet}
           filters={filters}
           onApplyFilters={handleApplyFilters}
+          availableItems={availableFilterOptions.items}
+          availableKinds={availableFilterOptions.kinds}
+          availableRanks={availableFilterOptions.ranks}
         />
       </div>
     </AppLayout>

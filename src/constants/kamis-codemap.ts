@@ -3,6 +3,10 @@ export type FilterOption = { code: string; name: string };
 
 export const categories: FilterOption[] = [
   {
+    code: "all",
+    name: "전체 부류",
+  },
+  {
     code: "100",
     name: "식량작물",
   },
@@ -18,14 +22,14 @@ export const categories: FilterOption[] = [
     code: "400",
     name: "과일류",
   },
-  {
-    code: "500",
-    name: "축산물",
-  },
-  {
-    code: "600",
-    name: "수산물",
-  },
+  // {
+  //   code: "500",
+  //   name: "축산물",
+  // },
+  // {
+  //   code: "600",
+  //   name: "수산물",
+  // },
 ];
 
 export const itemsByCategory: Record<string, FilterOption[]> = {

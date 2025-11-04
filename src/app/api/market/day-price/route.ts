@@ -53,7 +53,6 @@ export async function GET(request: NextRequest) {
         const searchParams = request.nextUrl.searchParams;
 
         // 쿼리 파라미터에서 값 가져오기 (기본값 설정)
-        const p_category_code = searchParams.get("p_category_code") || "400";
         const p_regday = searchParams.get("p_regday") || new Date().toISOString().split("T")[0];
         const p_country_code = searchParams.get("p_country_code") || "";
 
@@ -68,49 +67,74 @@ export async function GET(request: NextRequest) {
             );
         }
 
-        // KAMIS API URL 생성
-        const apiUrl = new URL("https://www.kamis.or.kr/service/price/xml.do");
-        apiUrl.searchParams.set("action", "dailyPriceByCategoryList");
-        apiUrl.searchParams.set("p_product_cls_code", "01");
-        apiUrl.searchParams.set("p_regday", p_regday);
-        apiUrl.searchParams.set("p_convert_kg_yn", "Y");
-        apiUrl.searchParams.set("p_item_category_code", p_category_code);
-        apiUrl.searchParams.set("p_cert_key", cert_key);
-        apiUrl.searchParams.set("p_cert_id", cert_id);
-        apiUrl.searchParams.set("p_returntype", "json");
+        // 4가지 부류 코드
+        const categoryCodes = ["100", "200", "300", "400"];
 
-        if (p_country_code) {
-            apiUrl.searchParams.set("p_country_code", p_country_code);
-        }
+        // 각 부류별 API URL 생성 함수
+        const createApiUrl = (categoryCode: string) => {
+            const apiUrl = new URL("https://www.kamis.or.kr/service/price/xml.do");
+            apiUrl.searchParams.set("action", "dailyPriceByCategoryList");
+            apiUrl.searchParams.set("p_product_cls_code", "01");
+            apiUrl.searchParams.set("p_regday", p_regday);
+            apiUrl.searchParams.set("p_convert_kg_yn", "Y");
+            apiUrl.searchParams.set("p_item_category_code", categoryCode);
+            apiUrl.searchParams.set("p_cert_key", cert_key);
+            apiUrl.searchParams.set("p_cert_id", cert_id);
+            apiUrl.searchParams.set("p_returntype", "json");
 
-        console.log(`[KAMIS API 요청] 부류: ${p_category_code}, 지역: ${p_country_code || '전체'}, 날짜: ${p_regday}`);
+            if (p_country_code) {
+                apiUrl.searchParams.set("p_country_code", p_country_code);
+            }
 
-        // KAMIS API 호출
-        const response = await fetch(apiUrl.toString(), {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            next: { revalidate: 3600 }, // 1시간 캐시
+            return apiUrl.toString();
+        };
+
+        console.log(`[KAMIS API 요청] 전체 부류 병렬 조회, 지역: ${p_country_code || '전체'}, 날짜: ${p_regday}`);
+
+        // 4가지 부류를 병렬로 조회
+        const fetchPromises = categoryCodes.map(async (categoryCode) => {
+            const response = await fetch(createApiUrl(categoryCode), {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                next: { revalidate: 3600 }, // 1시간 캐시
+            });
+
+            if (!response.ok) {
+                throw new Error(`KAMIS API 호출 실패 (부류: ${categoryCode}): ${response.status}`);
+            }
+
+            const data: KamisApiResponse = await response.json();
+
+            // 에러 체크
+            if (data.data.error_code !== "000") {
+                console.warn(`[KAMIS API 경고] 부류 ${categoryCode} 오류 코드: ${data.data.error_code}`);
+                return [];
+            }
+
+            console.log(`[KAMIS API 응답] 부류 ${categoryCode}: ${data.data.item.length}개 품목`);
+            return data.data.item;
         });
 
-        if (!response.ok) {
-            throw new Error(`KAMIS API 호출 실패: ${response.status}`);
-        }
+        // 모든 요청이 완료될 때까지 대기
+        const results = await Promise.all(fetchPromises);
 
-        const data: KamisApiResponse = await response.json();
+        // 모든 부류의 데이터를 하나로 합침
+        const allItems = results.flat();
 
-        // 에러 체크
-        if (data.data.error_code !== "000") {
-            return NextResponse.json(
-                { error: `KAMIS API 오류 코드: ${data.data.error_code}` },
-                { status: 400 }
-            );
-        }
+        console.log(`[KAMIS API 통합] 총 ${allItems.length}개 품목 조회됨`);
 
-        console.log(`[KAMIS API 응답] ${data.data.item.length}개 품목 조회됨`);
+        // 응답 형식 유지
+        const response: KamisApiResponse = {
+            condition: [],
+            data: {
+                error_code: "000",
+                item: allItems,
+            },
+        };
 
-        return NextResponse.json(data);
+        return NextResponse.json(response);
     } catch (error) {
         console.error("농산물 가격 정보 조회 중 오류:", error);
         return NextResponse.json(

@@ -1,24 +1,42 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { X, ChevronDown, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FilterState } from "./filter-bar";
 import {
   categories,
-  itemsByCategory,
-  kindsByItem,
-  ranks,
   retailCountryCodes,
-  getRetailRanksByKey,
   type FilterOption,
 } from "@/constants/kamis-codemap";
+
+interface AvailableItem {
+  code: string;
+  name: string;
+  categoryCode: string;
+}
+
+interface AvailableKind {
+  code: string;
+  name: string;
+  itemCode: string;
+}
+
+interface AvailableRank {
+  code: string;
+  name: string;
+  itemCode: string;
+  kindCode: string;
+}
 
 interface FilterBottomSheetProps {
   isOpen: boolean;
   onClose: () => void;
   filters: FilterState;
   onApplyFilters: (filters: FilterState) => void;
+  availableItems: AvailableItem[];
+  availableKinds: AvailableKind[];
+  availableRanks: AvailableRank[];
 }
 
 export function FilterBottomSheet({
@@ -26,6 +44,9 @@ export function FilterBottomSheet({
   onClose,
   filters,
   onApplyFilters,
+  availableItems,
+  availableKinds,
+  availableRanks,
 }: FilterBottomSheetProps) {
   // 과일류를 초기값으로 설정
   const defaultFilters: FilterState = {
@@ -40,6 +61,32 @@ export function FilterBottomSheet({
   useEffect(() => {
     setLocalFilters(filters);
   }, [filters]);
+
+  // 선택된 부류에 따라 품목 필터링
+  const filteredItems = useMemo(() => {
+    if (!localFilters.category || localFilters.category.code === "all") {
+      return availableItems;
+    }
+    return availableItems.filter(item => item.categoryCode === localFilters.category!.code);
+  }, [availableItems, localFilters.category]);
+
+  // 선택된 품목에 따라 품종 필터링
+  const filteredKinds = useMemo(() => {
+    if (!localFilters.item) {
+      return [];
+    }
+    return availableKinds.filter(kind => kind.itemCode === localFilters.item!.code);
+  }, [availableKinds, localFilters.item]);
+
+  // 선택된 품목+품종에 따라 등급 필터링 (품목과 품종이 모두 선택되어야 함)
+  const filteredRanks = useMemo(() => {
+    if (!localFilters.item || !localFilters.kind) {
+      return [];
+    }
+    return availableRanks.filter(
+      rank => rank.itemCode === localFilters.item!.code && rank.kindCode === localFilters.kind!.code
+    );
+  }, [availableRanks, localFilters.item, localFilters.kind]);
 
   const toggleSection = (section: string) => {
     const newExpanded = new Set(expandedSections);
@@ -113,14 +160,6 @@ export function FilterBottomSheet({
 
   const handleReset = () => {
     setLocalFilters(defaultFilters);
-  };
-
-  const getAvailableRanks = () => {
-    if (localFilters.category && localFilters.item && localFilters.kind) {
-      const key = `${localFilters.category.code}|${localFilters.item.code}|${localFilters.kind.code}`;
-      return getRetailRanksByKey(key);
-    }
-    return ranks;
   };
 
   if (!isOpen) return null;
@@ -270,7 +309,7 @@ export function FilterBottomSheet({
                         >
                           전체 품목
                         </button>
-                        {itemsByCategory[localFilters.category.code]?.map(
+                        {filteredItems.map(
                           (item) => (
                             <button
                               key={item.code}
@@ -319,7 +358,7 @@ export function FilterBottomSheet({
                         >
                           전체 품종
                         </button>
-                        {kindsByItem[localFilters.item.code]?.map((kind) => (
+                        {filteredKinds.map((kind) => (
                           <button
                             key={kind.code}
                             onClick={() => updateFilter("kind", kind)}
@@ -366,7 +405,7 @@ export function FilterBottomSheet({
                         >
                           전체 등급
                         </button>
-                        {getAvailableRanks().map((rank) => (
+                        {filteredRanks.map((rank) => (
                           <button
                             key={rank.code}
                             onClick={() => updateFilter("rank", rank)}
