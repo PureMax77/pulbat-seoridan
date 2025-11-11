@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Filter, X, ChevronDown, ChevronUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { FilterChip } from "./filter-chip";
 
@@ -56,9 +57,10 @@ export function FilterBar({ filters, onFilterChange, onOpenBottomSheet, classNam
     return (
         <div className={cn("w-full", className)}>
             <div className="flex items-center justify-between">
-                <button
+                <Button
                     onClick={toggleExpanded}
-                    className="flex items-center gap-2 text-lg font-semibold text-gray-900 hover:text-gray-700 transition-colors"
+                    variant="ghost"
+                    className="flex items-center gap-2 text-lg font-semibold px-0"
                 >
                     {isExpanded ? (
                         <ChevronUp className="w-5 h-5" />
@@ -66,20 +68,19 @@ export function FilterBar({ filters, onFilterChange, onOpenBottomSheet, classNam
                         <ChevronDown className="w-5 h-5" />
                     )}
                     <span>필터</span>
-                </button>
-                <button
+                </Button>
+                <Button
                     onClick={onOpenBottomSheet}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    className="flex items-center gap-2 bg-gradient-to-br from-blue-500 to-blue-600"
                 >
-                    <Filter className="w-4 h-4" />
-                    {/* <span className="text-sm font-medium">필터</span> */}
-                </button>
+                    <Filter className="w-4 h-4 text-white" />
+                </Button>
             </div>
 
             {isExpanded && (
                 <>
                     {hasVisibleFilters ? (
-                        <div className="space-y-3 mt-3">
+                        <div className="space-y-2 mt-3">
                             <div className="flex flex-wrap gap-2">
                                 {filters.countryCode && (
                                     <FilterChip
@@ -118,13 +119,15 @@ export function FilterBar({ filters, onFilterChange, onOpenBottomSheet, classNam
                                 )}
                             </div>
 
-                            <button
+                            <Button
                                 onClick={clearAllFilters}
-                                className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+                                variant="ghost"
+                                size="sm"
+                                className="flex items-center gap-1 px-1"
                             >
                                 <X className="w-4 h-4" />
                                 <span>모든 필터 제거</span>
-                            </button>
+                            </Button>
                         </div>
                     ) : (
                         <div></div>

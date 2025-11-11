@@ -10,8 +10,8 @@
     "cssVariables": true
   },
   "aliases": {
-    "components": "/Users/ertr/Documents/pulbat-seoridan/components",
-    "utils": "/Users/ertr/Documents/pulbat-seoridan/lib/utils",
-    "ui": "/Users/ertr/Documents/pulbat-seoridan/components/ui"
+    "components": "@/components",
+    "utils": "@/lib/utils",
+    "ui": "@/components/ui"
   }
 }

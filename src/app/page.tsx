@@ -1,37 +1,67 @@
 import { AppLayout } from "@/components/app-layout";
-import { Sparkles, Rocket } from "lucide-react";
+import { Sparkles, Rocket, TrendingUp, Percent } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 export default function Home() {
   return (
     <AppLayout>
       <div className="flex flex-col items-center justify-center h-full min-h-[calc(100vh-8rem)] p-6">
-        <div className="text-center space-y-6 max-w-sm">
-          {/* 아이콘 */}
-          <div className="relative inline-flex">
-            <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-blue-500 rounded-full blur-xl opacity-30 animate-pulse" />
-            <div className="relative w-24 h-24 bg-gradient-to-br from-green-500 to-blue-600 rounded-full flex items-center justify-center shadow-2xl">
-              <Rocket className="w-12 h-12 text-white" />
-            </div>
-          </div>
+        <div className="w-full max-w-md space-y-6">
+          {/* 메인 카드 */}
+          <Card>
+            <CardHeader className="text-center">
+              <div className="flex justify-center mb-4">
+                <Avatar className="w-24 h-24">
+                  <AvatarFallback className="bg-linear-to-br from-green-500 to-blue-600">
+                    <Rocket className="w-12 h-12 text-white" />
+                  </AvatarFallback>
+                </Avatar>
+              </div>
+              <CardTitle className="text-2xl bg-linear-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
+                홈 화면 준비중
+              </CardTitle>
+              <CardDescription className="text-base mt-2">
+                오늘의 추천 농산물과 특가 정보를<br />
+                곧 만나보실 수 있어요! 🥬
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex justify-center gap-2">
+                <Badge variant="secondary" className="flex items-center gap-1">
+                  <Sparkles className="w-3 h-3" />
+                  Coming Soon
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
 
-          {/* 텍스트 */}
-          <div className="space-y-3">
-            <h2 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-              홈 화면 준비중
-            </h2>
-            <p className="text-gray-500 text-sm leading-relaxed">
-              오늘의 추천 농산물과 특가 정보를
-              <br />곧 만나보실 수 있어요! 🥬
-            </p>
-          </div>
+          {/* 예정 기능 카드 */}
+          <div className="grid grid-cols-2 gap-3">
+            <Card className="opacity-60 hover:opacity-100 transition-opacity">
+              <CardContent className="flex flex-col items-center p-4 space-y-2">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <TrendingUp className="w-6 h-6 text-green-600" />
+                </div>
+                <div className="text-center">
+                  <p className="font-medium text-sm">추천 농산물</p>
+                  <p className="text-xs text-muted-foreground">오늘의 베스트</p>
+                </div>
+              </CardContent>
+            </Card>
 
-          {/* 장식 요소 */}
-          <div className="flex items-center justify-center gap-2 text-yellow-500">
-            <Sparkles className="w-5 h-5 animate-pulse" />
-            <span className="text-sm font-medium text-gray-400">
-              Coming Soon
-            </span>
-            <Sparkles className="w-5 h-5 animate-pulse" />
+            <Card className="opacity-60 hover:opacity-100 transition-opacity">
+              <CardContent className="flex flex-col items-center p-4 space-y-2">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <Percent className="w-6 h-6 text-blue-600" />
+                </div>
+                <div className="text-center">
+                  <p className="font-medium text-sm">특가 정보</p>
+                  <p className="text-xs text-muted-foreground">할인 상품</p>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>

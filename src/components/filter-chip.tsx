@@ -1,6 +1,8 @@
 "use client";
 
 import { X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface FilterChipProps {
@@ -12,20 +14,23 @@ interface FilterChipProps {
 
 export function FilterChip({ label, value, onRemove, className }: FilterChipProps) {
     return (
-        <div
+        <Badge
+            variant="secondary"
             className={cn(
-                "inline-flex items-center gap-1 px-3 py-1.5 bg-blue-100 text-blue-800 rounded-full text-sm font-medium",
+                "inline-flex items-center gap-1 px-3 py-1.5 rounded-full",
                 className
             )}
         >
             <span>{label}</span>
-            <button
+            <Button
                 onClick={onRemove}
-                className="ml-1 hover:bg-blue-200 rounded-full p-0.5 transition-colors"
+                variant="ghost"
+                size="icon"
+                className="ml-1 h-4 w-4 p-0 hover:bg-secondary/80"
                 aria-label={`${label} 필터 제거`}
             >
                 <X className="w-3 h-3" />
-            </button>
-        </div>
+            </Button>
+        </Badge>
     );
 }

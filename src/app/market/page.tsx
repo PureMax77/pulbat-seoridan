@@ -4,7 +4,10 @@ import { useState, useEffect, useMemo } from "react";
 import { AppLayout } from "@/components/app-layout";
 import { FilterBar, FilterState } from "@/components/filter-bar";
 import { FilterBottomSheet } from "@/components/filter-bottom-sheet";
+import { PriceCard } from "./(components)/PriceCard";
 import { TrendingUp, BarChart3, Loader2 } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 // 개별 품목 가격 정보
 interface PriceItem {
@@ -207,15 +210,6 @@ export default function MarketPage() {
     filters.kind !== undefined ||
     filters.rank !== undefined;
 
-  // 가격 포맷팅 함수
-  const formatPrice = (price: string) => {
-    if (!price || price === "-") return "가격 정보 없음";
-    // 쉼표가 포함된 문자열에서 쉼표를 제거한 후 파싱
-    const cleanPrice = price.replace(/,/g, "");
-    const numericPrice = parseFloat(cleanPrice);
-    return `${numericPrice.toLocaleString()}원`;
-  };
-
   return (
     <AppLayout>
       <div className="min-h-screen bg-gray-50">
@@ -232,41 +226,40 @@ export default function MarketPage() {
         </div>
 
         {/* 필터 영역 높이만큼 여백 추가 */}
-        <div className={isFilterExpanded && hasVisibleFilters ? "h-[7.5rem]" : "h-12"}></div>
+        <div className={isFilterExpanded && hasVisibleFilters ? "h-30" : "h-12"}></div>
 
         {/* 메인 콘텐츠 */}
         <div className="max-w-4xl mx-auto p-4">
           {loading ? (
-            <div className="flex flex-col items-center justify-center min-h-[calc(100vh-12rem)] p-6">
-              <Loader2 className="w-12 h-12 text-blue-500 animate-spin mb-4" />
-              <p className="text-gray-500">농산물 가격 정보를 불러오는 중...</p>
-            </div>
+            <Card className="flex flex-col items-center justify-center min-h-[calc(100vh-12rem)]">
+              <CardContent className="flex flex-col items-center p-6">
+                <Loader2 className="w-12 h-12 text-blue-500 animate-spin mb-4" />
+                <p className="text-muted-foreground">농산물 가격 정보를 불러오는 중...</p>
+              </CardContent>
+            </Card>
           ) : error ? (
-            <div className="flex flex-col items-center justify-center min-h-[calc(100vh-12rem)] p-6">
-              <div className="text-center space-y-4">
+            <Card className="flex flex-col items-center justify-center min-h-[calc(100vh-12rem)]">
+              <CardContent className="text-center space-y-4 p-6">
                 <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto">
                   <BarChart3 className="w-8 h-8 text-red-500" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-800">오류가 발생했습니다</h3>
-                <p className="text-gray-500">{error}</p>
-                <button
-                  onClick={fetchPriceData}
-                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-                >
+                <CardTitle className="text-xl">오류가 발생했습니다</CardTitle>
+                <p className="text-muted-foreground">{error}</p>
+                <Button onClick={fetchPriceData} variant="default">
                   다시 시도
-                </button>
-              </div>
-            </div>
+                </Button>
+              </CardContent>
+            </Card>
           ) : filteredPriceData.length === 0 ? (
-            <div className="flex flex-col items-center justify-center min-h-[calc(100vh-12rem)] p-6">
-              <div className="text-center space-y-4">
+            <Card className="flex flex-col items-center justify-center min-h-[calc(100vh-12rem)]">
+              <CardContent className="text-center space-y-4 p-6">
                 <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto">
                   <BarChart3 className="w-8 h-8 text-gray-400" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-800">검색 결과가 없습니다</h3>
-                <p className="text-gray-500">다른 필터 조건을 선택해보세요</p>
-              </div>
-            </div>
+                <CardTitle className="text-xl">검색 결과가 없습니다</CardTitle>
+                <p className="text-muted-foreground">다른 필터 조건을 선택해보세요</p>
+              </CardContent>
+            </Card>
           ) : (
             <div className="space-y-3 pb-6">
               <div className="mb-4">
@@ -274,38 +267,10 @@ export default function MarketPage() {
               </div>
 
               {filteredPriceData.map((item, index) => (
-                <div
+                <PriceCard
                   key={`${item.item_code}-${item.kind_code}-${item.rank_code}-${index}`}
-                  className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow"
-                >
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <div className="flex items-baseline gap-2 mb-1">
-                        <h3 className="text-lg font-semibold text-gray-800">
-                          {item.item_name}
-                        </h3>
-                        <span className="text-sm text-gray-500">
-                          {item.kind_name}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <span className="px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full text-xs font-medium">
-                          {item.rank}
-                        </span>
-                        <span className="text-gray-400">•</span>
-                        <span>{item.unit}</span>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-2xl font-bold text-blue-600">
-                        {formatPrice(item.dpr1)}
-                      </div>
-                      <div className="text-xs text-gray-400 mt-1">
-                        {item.day1}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                  item={item}
+                />
               ))}
             </div>
           )}

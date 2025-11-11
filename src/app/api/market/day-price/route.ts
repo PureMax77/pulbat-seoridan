@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
             apiUrl.searchParams.set("action", "dailyPriceByCategoryList");
             apiUrl.searchParams.set("p_product_cls_code", "01");
             apiUrl.searchParams.set("p_regday", p_regday);
-            apiUrl.searchParams.set("p_convert_kg_yn", "Y");
+            apiUrl.searchParams.set("p_convert_kg_yn", "N");
             apiUrl.searchParams.set("p_item_category_code", categoryCode);
             apiUrl.searchParams.set("p_cert_key", cert_key);
             apiUrl.searchParams.set("p_cert_id", cert_id);
