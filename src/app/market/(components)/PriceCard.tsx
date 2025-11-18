@@ -1,3 +1,6 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -16,6 +19,7 @@ interface PriceItem {
 
 interface PriceCardProps {
     item: PriceItem;
+    countryCode?: string;
 }
 
 // 가격 포맷팅 함수
@@ -27,9 +31,34 @@ const formatPrice = (price: string) => {
     return `${numericPrice.toLocaleString()}원`;
 };
 
-export function PriceCard({ item }: PriceCardProps) {
+export function PriceCard({ item, countryCode }: PriceCardProps) {
+    const router = useRouter();
+
+    const handleClick = () => {
+        // 등급 코드 정규화 (앞의 0 제거)
+        const normalizeCode = (code: string) => {
+            const num = parseInt(code, 10);
+            return isNaN(num) ? code : String(num);
+        };
+        const normalizedRankCode = normalizeCode(item.rank_code);
+
+        // 쿼리 파라미터 구성 (품목 코드는 path parameter로, 부류 코드는 품목 코드로부터 계산 가능하므로 제외)
+        const params = new URLSearchParams();
+        if (countryCode) {
+            params.set("p_countrycode", countryCode);
+        }
+        params.set("p_kindcode", item.kind_code);
+        params.set("p_productrankcode", normalizedRankCode);
+
+        // 품목 코드를 path parameter로 전달
+        router.push(`/market/${item.item_code}?${params.toString()}`);
+    };
+
     return (
-        <Card className="hover:shadow-md transition-shadow hover:cursor-pointer">
+        <Card
+            className="hover:shadow-md transition-shadow hover:cursor-pointer"
+            onClick={handleClick}
+        >
             <CardContent className="p-4">
                 <div className="flex justify-between items-start">
                     <div className="flex-1">

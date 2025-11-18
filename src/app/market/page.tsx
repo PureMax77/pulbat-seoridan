@@ -270,6 +270,7 @@ export default function MarketPage() {
                 <PriceCard
                   key={`${item.item_code}-${item.kind_code}-${item.rank_code}-${index}`}
                   item={item}
+                  countryCode={filters.countryCode?.code}
                 />
               ))}
             </div>
