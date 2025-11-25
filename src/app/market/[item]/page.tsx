@@ -22,6 +22,7 @@ import {
 } from "@/constants/kamis-codemap";
 import { MapPin, Leaf, Award } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { PriceChart } from "./(components)/PriceChart";
 
 export default function MarketDetailPage() {
     const params = useParams();
@@ -49,7 +50,7 @@ export default function MarketDetailPage() {
     const defaultKind = availableKinds.length > 0 ? availableKinds[0] : null;
     const selectedKindCode = kindCodeFromQuery || defaultKind?.code || "";
     const selectedKind = availableKinds.find(kind => kind.code === selectedKindCode) || defaultKind;
-
+    console.log(selectedKind);
     // 등급 기본값 계산 (품종에 따라 다를 수 있음)
     const comboKey = selectedKindCode ? `${categoryCode}|${itemCode}|${selectedKindCode}` : "";
     const availableRanks = comboKey && comboRetailRanksFlat[comboKey]
@@ -60,7 +61,7 @@ export default function MarketDetailPage() {
     const selectedRank = rankCodeFromQuery
         ? (availableRanks.find(rank => normalizeCode(rank.code) === normalizeCode(rankCodeFromQuery)) || defaultRank)
         : defaultRank;
-
+    console.log(selectedRank);
     // 초기값 계산 (렌더링 전에 계산)
     const initialItemName = itemsByCategory[categoryCode]?.find(item => item.code === itemCode)?.name || itemCode;
     const initialKindName = selectedKind?.name || "";
@@ -130,43 +131,40 @@ export default function MarketDetailPage() {
 
                         {/* 정보 카드 */}
                         <Card className="pt-6">
-                            {/* <CardHeader>
-                                {/* <CardTitle>상품 정보</CardTitle> */}
-                            {/* </CardHeader> */}
-                            <CardContent className="space-y-4">
-                                {/* 지역 선택 */}
-                                <div className="space-y-2">
-                                    <div className="flex items-center gap-2">
-                                        <MapPin className="h-4 w-4 text-blue-600" />
-                                        <label className="text-sm font-medium text-gray-700">지역</label>
+                            <CardContent>
+                                {/* 지역, 품종, 등급 한 줄 레이아웃 */}
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    {/* 지역 선택 */}
+                                    <div className="space-y-2">
+                                        <div className="flex items-center gap-2">
+                                            <MapPin className="h-4 w-4 text-blue-600" />
+                                            <label className="text-sm font-medium text-gray-700">지역</label>
+                                        </div>
+                                        <Select
+                                            value={countryCode || "all"}
+                                            onValueChange={handleCountryChange}
+                                        >
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="전체" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="all">전체</SelectItem>
+                                                {countryCodes.map((country) => (
+                                                    <SelectItem key={country.code} value={country.code}>
+                                                        {country.name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
                                     </div>
-                                    <Select
-                                        value={countryCode || "all"}
-                                        onValueChange={handleCountryChange}
-                                    >
-                                        <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="전체" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="all">전체</SelectItem>
-                                            {countryCodes.map((country) => (
-                                                <SelectItem key={country.code} value={country.code}>
-                                                    {country.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div>
 
-                                {/* 품종, 등급 */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {/* 품종 */}
                                     <div className="space-y-2">
                                         <div className="flex items-center gap-2">
                                             <Leaf className="h-4 w-4 text-purple-600" />
                                             <label className="text-sm font-medium text-gray-700">품종</label>
                                         </div>
-                                        <Badge variant="secondary" className="text-sm px-3 py-1">
+                                        <Badge variant="secondary" className="text-sm px-3 py-1 border-0">
                                             {kindName || "미선택"}
                                         </Badge>
                                     </div>
@@ -177,7 +175,7 @@ export default function MarketDetailPage() {
                                             <Award className="h-4 w-4 text-amber-600" />
                                             <label className="text-sm font-medium text-gray-700">등급</label>
                                         </div>
-                                        <Badge variant="secondary" className="text-sm px-3 py-1">
+                                        <Badge variant="secondary" className="text-sm px-3 py-1 border-0">
                                             {rankName || "미선택"}
                                         </Badge>
                                     </div>
@@ -185,15 +183,14 @@ export default function MarketDetailPage() {
                             </CardContent>
                         </Card>
 
-                        {/* 상세 정보 카드 */}
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>상세 정보</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-gray-700">상세 정보를 불러오는 중...</p>
-                            </CardContent>
-                        </Card>
+                        {/* 가격 차트 */}
+                        <PriceChart
+                            categoryCode={categoryCode}
+                            itemCode={itemCode}
+                            kindCode={selectedKindCode}
+                            rankCode={selectedRankCode}
+                            countryCode={countryCode}
+                        />
                     </div>
                 </div>
             </div>
