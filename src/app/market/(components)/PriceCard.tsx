@@ -72,7 +72,7 @@ export function PriceCard({ item, countryCode }: PriceCardProps) {
                             </h3>
                         </div>
                         <div className="flex items-center gap-2 text-sm">
-                            <Badge variant="secondary" className="text-xs bg-gradient-to-br from-gray-200 to-gray-300">
+                            <Badge variant="secondary" className="text-xs bg-linear-to-br from-gray-200 to-gray-300">
                                 {item.rank}
                             </Badge>
                             <span className="text-muted-foreground">•</span>

@@ -71,7 +71,7 @@ export function FilterBar({ filters, onFilterChange, onOpenBottomSheet, classNam
                 </Button>
                 <Button
                     onClick={onOpenBottomSheet}
-                    className="flex items-center gap-2 bg-gradient-to-br from-blue-500 to-blue-600"
+                    className="flex items-center gap-2 bg-linear-to-br from-blue-500 to-blue-600"
                 >
                     <Filter className="w-4 h-4 text-white" />
                 </Button>

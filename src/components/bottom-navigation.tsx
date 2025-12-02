@@ -34,7 +34,7 @@ export function BottomNavigation() {
               )}
             >
               {isActive && (
-                <div className="absolute top-1 w-12 h-1 bg-gradient-to-r from-green-500 to-green-600 rounded-full" />
+                <div className="absolute top-1 w-12 h-1 bg-linear-to-r from-green-500 to-green-600 rounded-full" />
               )}
               <div
                 className={cn(
