@@ -1,5 +1,6 @@
 import { BottomNavigation } from "./bottom-navigation";
 import { Leaf, Phone, Award, Heart } from "lucide-react";
+import Link from "next/link";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -77,9 +78,11 @@ export function AppLayout({ children }: AppLayoutProps) {
         {/* 헤더 */}
         <header className="sticky top-0 bg-white/95 backdrop-blur-md border-b border-gray-200 z-40 px-5 py-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-md shadow-green-500/30">
-              <Leaf className="w-5 h-5 text-white" />
-            </div>
+            <Link href="/" className="cursor-pointer hover:opacity-80 transition-opacity">
+              <div className="w-9 h-9 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-md shadow-green-500/30">
+                <Leaf className="w-5 h-5 text-white" />
+              </div>
+            </Link>
             <h1 className="text-xl font-bold bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent">
               풀밭서리단
             </h1>

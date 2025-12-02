@@ -19,7 +19,7 @@ import {
     countryCodes,
     comboRetailRanksFlat,
 } from "@/constants/kamis-codemap";
-import { MapPin, Leaf, Award } from "lucide-react";
+import { MapPin, Leaf, Award, ChevronLeft } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { PriceChart } from "./(components)/PriceChart";
 
@@ -117,6 +117,13 @@ export default function MarketDetailPage() {
                         {/* 제목 */}
                         <div className="mb-4">
                             <div className="flex items-center gap-3">
+                                <button
+                                    onClick={() => router.back()}
+                                    className="hover:bg-gray-100 rounded-full transition-colors -mr-2"
+                                    aria-label="뒤로가기"
+                                >
+                                    <ChevronLeft className="h-8 w-8 text-gray-700" />
+                                </button>
                                 <Avatar className="h-10 w-10">
                                     <AvatarImage src="/fruit-images/apple.png" alt={itemName} />
                                     <AvatarFallback>{itemName?.[0] || "?"}</AvatarFallback>
@@ -132,7 +139,7 @@ export default function MarketDetailPage() {
                         <Card className="pt-6">
                             <CardContent>
                                 {/* 지역, 품종, 등급 한 줄 레이아웃 */}
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className="grid grid-cols-3 gap-4">
                                     {/* 지역 선택 */}
                                     <div className="space-y-2">
                                         <div className="flex items-center gap-2">
