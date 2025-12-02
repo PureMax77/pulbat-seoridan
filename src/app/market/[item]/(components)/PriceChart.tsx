@@ -11,6 +11,8 @@ import {
     Tooltip,
     Legend,
     Filler,
+    TooltipItem,
+    ChartOptions,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -55,10 +57,27 @@ const PERIOD_CONFIG = {
     "1year": { label: "1년", days: 365 },
 };
 
+interface ChartData {
+    labels: string[];
+    datasets: {
+        label: string;
+        data: number[];
+        borderColor: string;
+        backgroundColor: string;
+        tension: number;
+        fill: boolean;
+        pointRadius: number;
+        pointHoverRadius: number;
+        pointBackgroundColor: string;
+        pointBorderColor: string;
+        pointBorderWidth: number;
+    }[];
+}
+
 export function PriceChart({ categoryCode, itemCode, kindCode, rankCode, countryCode }: PriceChartProps) {
     const [period, setPeriod] = useState<PeriodType>("1month");
     const [loading, setLoading] = useState(false);
-    const [chartData, setChartData] = useState<any>(null);
+    const [chartData, setChartData] = useState<ChartData | null>(null);
     const [error, setError] = useState<string | null>(null);
 
     // 날짜 계산 함수
@@ -177,10 +196,11 @@ export function PriceChart({ categoryCode, itemCode, kindCode, rankCode, country
     // 기간 변경 시 데이터 다시 가져오기
     useEffect(() => {
         fetchChartData(period);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [period, categoryCode, itemCode, kindCode, rankCode, countryCode]);
 
     // Chart.js 옵션
-    const options = {
+    const options: ChartOptions<'line'> = {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
@@ -189,8 +209,9 @@ export function PriceChart({ categoryCode, itemCode, kindCode, rankCode, country
             },
             tooltip: {
                 callbacks: {
-                    label: function (context: any) {
-                        return `가격: ${context.parsed.y.toLocaleString()}원`;
+                    label: function (context: TooltipItem<'line'>) {
+                        const value = context.parsed.y;
+                        return `가격: ${value !== null ? value.toLocaleString() : 0}원`;
                     },
                 },
             },
@@ -199,8 +220,8 @@ export function PriceChart({ categoryCode, itemCode, kindCode, rankCode, country
             y: {
                 beginAtZero: false,
                 ticks: {
-                    callback: function (value: any) {
-                        return value.toLocaleString() + "원";
+                    callback: function (tickValue: string | number) {
+                        return typeof tickValue === 'number' ? tickValue.toLocaleString() + "원" : tickValue;
                     },
                 },
                 grid: {

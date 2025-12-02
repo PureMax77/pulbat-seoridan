@@ -5,8 +5,8 @@ import { AppLayout } from "@/components/app-layout";
 import { FilterBar, FilterState } from "@/components/filter-bar";
 import { FilterBottomSheet } from "@/components/filter-bottom-sheet";
 import { PriceCard } from "./(components)/PriceCard";
-import { TrendingUp, BarChart3, Loader2 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { BarChart3, Loader2 } from "lucide-react";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 // 개별 품목 가격 정보
@@ -41,7 +41,7 @@ interface PriceData {
 }
 
 interface KamisApiResponse {
-  condition: any[];
+  condition: unknown[];
   data: PriceData;
 }
 

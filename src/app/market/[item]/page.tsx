@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { AppLayout } from "@/components/app-layout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
     Select,
@@ -13,7 +13,6 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import {
-    categories,
     itemsByCategory,
     kindsByItem,
     ranks,
@@ -69,9 +68,9 @@ export default function MarketDetailPage() {
 
     // state로 관리
     const [countryCode, setCountryCode] = useState<string | null>(searchParams.get("p_countrycode"));
-    const [itemName, setItemName] = useState<string>(initialItemName);
-    const [kindName, setKindName] = useState<string>(initialKindName);
-    const [rankName, setRankName] = useState<string>(initialRankName);
+    const itemName = initialItemName;
+    const kindName = initialKindName;
+    const rankName = initialRankName;
 
     // URL에서 query 제거 (한 번만 실행)
     useEffect(() => {

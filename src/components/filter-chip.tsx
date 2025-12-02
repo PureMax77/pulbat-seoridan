@@ -12,7 +12,7 @@ interface FilterChipProps {
     className?: string;
 }
 
-export function FilterChip({ label, value, onRemove, className }: FilterChipProps) {
+export function FilterChip({ label, onRemove, className }: FilterChipProps) {
     return (
         <Badge
             variant="secondary"
