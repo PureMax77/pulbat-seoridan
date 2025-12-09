@@ -62,10 +62,14 @@ export function FilterBar({ filters, onFilterChange, onOpenBottomSheet, classNam
                     variant="ghost"
                     className="flex items-center gap-2 text-lg font-semibold px-0"
                 >
-                    {isExpanded ? (
-                        <ChevronUp className="w-5 h-5" />
-                    ) : (
-                        <ChevronDown className="w-5 h-5" />
+                    {hasVisibleFilters && (
+                        <>
+                            {isExpanded ? (
+                                <ChevronUp className="w-5 h-5" />
+                            ) : (
+                                <ChevronDown className="w-5 h-5" />
+                            )}
+                        </>
                     )}
                     <span>필터</span>
                 </Button>

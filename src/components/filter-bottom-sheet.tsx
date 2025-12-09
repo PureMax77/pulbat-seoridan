@@ -62,6 +62,20 @@ export function FilterBottomSheet({
     setLocalFilters(filters);
   }, [filters]);
 
+  // 바텀시트가 열릴 때 body 스크롤 막기
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    // cleanup: 컴포넌트 언마운트 시 원래대로 복구
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
   // 선택된 부류에 따라 품목 필터링
   const filteredItems = useMemo(() => {
     if (!localFilters.category || localFilters.category.code === "all") {

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { getItemImagePath } from "@/constants/kamis-codemap";
 
 interface PriceItem {
     item_name: string;
@@ -33,6 +34,7 @@ const formatPrice = (price: string) => {
 
 export function PriceCard({ item, countryCode }: PriceCardProps) {
     const router = useRouter();
+    const imagePath = `/fruit-images/${getItemImagePath(item.item_code)}`;
 
     const handleClick = () => {
         // 등급 코드 정규화 (앞의 0 제거)
@@ -64,7 +66,7 @@ export function PriceCard({ item, countryCode }: PriceCardProps) {
                     <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
                             <Avatar className="h-10 w-10">
-                                <AvatarImage src="/fruit-images/apple.png" alt={item.item_name} />
+                                <AvatarImage src={imagePath} alt={item.item_name} />
                                 <AvatarFallback>{item.item_name[0]}</AvatarFallback>
                             </Avatar>
                             <h3 className="text-lg font-semibold">

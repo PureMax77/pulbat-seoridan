@@ -18,6 +18,7 @@ import {
     ranks,
     countryCodes,
     comboRetailRanksFlat,
+    getItemImagePath,
 } from "@/constants/kamis-codemap";
 import { MapPin, Leaf, Award, ChevronLeft } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -71,6 +72,7 @@ export default function MarketDetailPage() {
     const itemName = initialItemName;
     const kindName = initialKindName;
     const rankName = initialRankName;
+    const imagePath = `/fruit-images/${getItemImagePath(itemCode)}`;
 
     // URL에서 query 제거 (한 번만 실행)
     useEffect(() => {
@@ -125,7 +127,7 @@ export default function MarketDetailPage() {
                                     <ChevronLeft className="h-8 w-8 text-gray-700" />
                                 </button>
                                 <Avatar className="h-10 w-10">
-                                    <AvatarImage src="/fruit-images/apple.png" alt={itemName} />
+                                    <AvatarImage src={imagePath} alt={itemName} />
                                     <AvatarFallback>{itemName?.[0] || "?"}</AvatarFallback>
                                 </Avatar>
                                 <div className="flex items-end gap-2">

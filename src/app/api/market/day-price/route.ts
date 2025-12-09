@@ -67,8 +67,8 @@ export async function GET(request: NextRequest) {
             );
         }
 
-        // 4가지 부류 코드
-        const categoryCodes = ["100", "200", "300", "400"];
+        // 2가지 부류 코드
+        const categoryCodes = ["200", "400"];
 
         // 각 부류별 API URL 생성 함수
         const createApiUrl = (categoryCode: string) => {
