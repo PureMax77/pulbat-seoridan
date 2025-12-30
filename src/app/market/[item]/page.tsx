@@ -33,7 +33,10 @@ export default function MarketDetailPage() {
     const itemCode = params.item as string;
 
     // 부류 코드 계산 (품목 코드의 첫 번째 자리 + "00")
-    const categoryCode = itemCode ? itemCode.charAt(0) + "00" : "";
+    // 예외: 422번(방울토마토)만 400이 아니라 200으로 변환
+    const categoryCode = itemCode
+        ? (itemCode === "422" ? "200" : itemCode.charAt(0) + "00")
+        : "";
 
     // 등급 코드 정규화하여 찾기 (앞의 0 제거)
     const normalizeCode = (code: string) => {
@@ -61,7 +64,7 @@ export default function MarketDetailPage() {
     const selectedRank = rankCodeFromQuery
         ? (availableRanks.find(rank => normalizeCode(rank.code) === normalizeCode(rankCodeFromQuery)) || defaultRank)
         : defaultRank;
-    console.log(selectedRank);
+
     // 초기값 계산 (렌더링 전에 계산)
     const initialItemName = itemsByCategory[categoryCode]?.find(item => item.code === itemCode)?.name || itemCode;
     const initialKindName = selectedKind?.name || "";
@@ -73,7 +76,7 @@ export default function MarketDetailPage() {
     const kindName = initialKindName;
     const rankName = initialRankName;
     const imagePath = `/fruit-images/${getItemImagePath(itemCode)}`;
-
+    console.log(itemName, categoryCode)
     // URL에서 query 제거 (한 번만 실행)
     useEffect(() => {
         // URL에서 query 제거 (history에 남지 않도록 replace 사용)
