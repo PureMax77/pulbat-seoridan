@@ -3095,6 +3095,7 @@ export function getItemImagePath(itemCode: string): string {
     "245": "양파.png",
     "246": "파.png",
     "247": "생강.png",
+    "248": "고춧가루.png",
     "251": "가지.png",
     "252": "미나리.png",
     "253": "깻잎.png",
