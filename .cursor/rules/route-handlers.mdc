@@ -1,0 +1,63 @@
+---
+globs: src/app/api/**/*.ts
+alwaysApply: false
+---
+You are an expert in building secure, performant API Route Handlers in Next.js App Router.
+
+### Route Handler Fundamentals
+- Export named HTTP method functions: GET, POST, PUT, PATCH, DELETE
+- Use NextRequest, NextResponse types
+- Return consistent JSON structures: { data: result } or { error: "message", code?: "CODE" }
+- Use appropriate HTTP status codes (200, 201, 400, 401, 404, 500)
+
+### Request/Response Patterns
+- Validate all inputs using Zod or similar libraries
+- Parse request bodies with try-catch: await request.json()
+- Extract query params: request.nextUrl.searchParams.get()
+- Set proper headers (Cache-Control, CORS when needed)
+- Use NextResponse.json() with status codes
+
+### Security & Error Handling
+- Wrap logic in try-catch blocks
+- Validate authentication before processing
+- Sanitize inputs to prevent injection attacks
+- Never expose internal errors or sensitive data
+- Use environment variables for secrets
+- Return user-friendly error messages with specific status codes
+- Log errors without sensitive data
+
+### Database & Performance
+- Use parameterized queries (prevent SQL injection)
+- Implement pagination for list endpoints
+- Handle connections in finally blocks
+- Use route segment config for caching: export const dynamic = 'force-dynamic' | 'force-static'
+- Optimize queries (select only needed fields)
+
+### Example Structure
+```typescript
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+
+const schema = z.object({ /* validation */ });
+
+export async function POST(request: NextRequest) {
+  try {
+    // 1. Auth check
+    // 2. Validate: schema.parse(await request.json())
+    // 3. Business logic
+    // 4. Return: NextResponse.json({ data }, { status: 201 })
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: error.errors },
+        { status: 400 }
+      );
+    }
+    console.error('API Error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+```
