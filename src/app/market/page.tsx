@@ -277,10 +277,10 @@ export default function MarketPage() {
             <div className="space-y-3 pb-6">
               <div className="mb-4 flex items-center gap-2">
                 <h1 className="text-2xl font-bold text-gray-800">오늘의 농산물 소매가</h1>
-                <TooltipProvider>
+                <TooltipProvider delayDuration={0}>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <AlertCircle className="w-5 h-5 text-gray-400 cursor-help" />
+                      <AlertCircle className="w-5 h-5 text-gray-400 cursor-pointer" />
                     </TooltipTrigger>
                     <TooltipContent side="bottom" className="max-w-[250px] bg-gray-900 text-white">
                       <p className="leading-relaxed">
