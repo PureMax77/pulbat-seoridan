@@ -48,12 +48,30 @@ interface KamisApiResponse {
     data: PriceData;
 }
 
+// 한국 시간 기준으로 적절한 날짜 계산 (주말 제외)
+const getKoreanBusinessDay = () => {
+    // 한국 시간대로 현재 날짜 가져오기
+    const now = new Date();
+    const koreanTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Seoul" }));
+
+    const dayOfWeek = koreanTime.getDay(); // 0(일) ~ 6(토)
+
+    // 토요일(6)이면 -1일, 일요일(0)이면 -2일
+    if (dayOfWeek === 6) {
+        koreanTime.setDate(koreanTime.getDate() - 1); // 금요일
+    } else if (dayOfWeek === 0) {
+        koreanTime.setDate(koreanTime.getDate() - 2); // 금요일
+    }
+
+    return koreanTime.toISOString().split("T")[0];
+};
+
 export async function GET(request: NextRequest) {
     try {
         const searchParams = request.nextUrl.searchParams;
 
-        // 쿼리 파라미터에서 값 가져오기 (기본값 설정)
-        const p_regday = searchParams.get("p_regday") || new Date().toISOString().split("T")[0];
+        // 한국 시간 기준 영업일 날짜 가져오기
+        const p_regday = getKoreanBusinessDay();
         const p_country_code = searchParams.get("p_country_code") || "";
 
         // 환경변수에서 인증 정보 가져오기
@@ -134,7 +152,12 @@ export async function GET(request: NextRequest) {
             },
         };
 
-        return NextResponse.json(response);
+        // 조회한 날짜를 헤더에 추가
+        return NextResponse.json(response, {
+            headers: {
+                "X-Price-Date": p_regday,
+            },
+        });
     } catch (error) {
         console.error("농산물 가격 정보 조회 중 오류:", error);
         return NextResponse.json(

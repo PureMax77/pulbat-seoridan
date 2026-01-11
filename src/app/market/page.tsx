@@ -5,9 +5,15 @@ import { AppLayout } from "@/components/app-layout";
 import { FilterBar, FilterState } from "@/components/filter-bar";
 import { FilterBottomSheet } from "@/components/filter-bottom-sheet";
 import { PriceCard } from "./(components)/PriceCard";
-import { BarChart3, Loader2 } from "lucide-react";
+import { BarChart3, Loader2, AlertCircle } from "lucide-react";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 // 개별 품목 가격 정보
 interface PriceItem {
@@ -54,6 +60,7 @@ export default function MarketPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isFilterExpanded, setIsFilterExpanded] = useState(true);
+  const [priceDate, setPriceDate] = useState<string>("");
 
   // API 재요청이 필요한 필터 (지역만)
   const apiFilters = useMemo(() => ({
@@ -82,6 +89,12 @@ export default function MarketPage() {
 
       if (!response.ok) {
         throw new Error("가격 정보를 불러오는데 실패했습니다.");
+      }
+
+      // 헤더에서 조회 날짜 가져오기
+      const dateFromHeader = response.headers.get("X-Price-Date");
+      if (dateFromHeader) {
+        setPriceDate(dateFromHeader);
       }
 
       const data: KamisApiResponse = await response.json();
@@ -262,8 +275,25 @@ export default function MarketPage() {
             </Card>
           ) : (
             <div className="space-y-3 pb-6">
-              <div className="mb-4">
+              <div className="mb-4 flex items-center gap-2">
                 <h1 className="text-2xl font-bold text-gray-800">오늘의 농산물 소매가</h1>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <AlertCircle className="w-5 h-5 text-gray-400 cursor-help" />
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="max-w-[250px] bg-gray-900 text-white">
+                      <p className="leading-relaxed">
+                        토요일, 일요일은 가격 집계가 되지 않아 금요일 날짜 기준의 가격으로 표시됩니다.
+                      </p>
+                      {priceDate && (
+                        <p className="mt-2 text-xs text-gray-300">
+                          기준 일자: {priceDate}
+                        </p>
+                      )}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
 
               {filteredPriceData.map((item, index) => (
