@@ -6,6 +6,12 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { getItemImagePath } from "@/constants/kamis-codemap";
 
+// 날짜별 가격 정보
+interface PriceWithDate {
+    date: string;
+    price: string;
+}
+
 interface PriceItem {
     item_name: string;
     item_code: string;
@@ -16,6 +22,7 @@ interface PriceItem {
     unit: string;
     day1: string;
     dpr1: string;
+    priceHistory: PriceWithDate[]; // 4일치 가격 이력 (최신순)
 }
 
 interface PriceCardProps {
@@ -25,16 +32,27 @@ interface PriceCardProps {
 
 // 가격 포맷팅 함수
 const formatPrice = (price: string) => {
-    if (!price || price === "-") return "가격 정보 없음";
+    if (!price || price === "-") return null;
     // 쉼표가 포함된 문자열에서 쉼표를 제거한 후 파싱
     const cleanPrice = price.replace(/,/g, "");
     const numericPrice = parseFloat(cleanPrice);
     return `${numericPrice.toLocaleString()}원`;
 };
 
+// 가장 최신 유효한 가격 찾기
+const getLatestPrice = (priceHistory: PriceWithDate[] | undefined) => {
+    if (!priceHistory || priceHistory.length === 0) return null;
+    const validPrice = priceHistory.find(p => p.price && p.price !== "-");
+    return validPrice || null;
+};
+
 export function PriceCard({ item, countryCode }: PriceCardProps) {
     const router = useRouter();
     const imagePath = `/fruit-images/${getItemImagePath(item.item_code)}`;
+
+    // 4일치 데이터 중 가장 최신 유효한 가격 찾기
+    const latestPriceData = getLatestPrice(item.priceHistory);
+    const displayPrice = latestPriceData ? formatPrice(latestPriceData.price) : null;
 
     const handleClick = () => {
         // 등급 코드 정규화 (앞의 0 제거)
@@ -92,7 +110,7 @@ export function PriceCard({ item, countryCode }: PriceCardProps) {
                     </div>
                     <div className="text-right h-full">
                         <div className="text-2xl font-bold">
-                            {formatPrice(item.dpr1)}
+                            {displayPrice || "-"}
                         </div>
                         <div className="text-xs text-muted-foreground mt-1">
                             {item.unit}

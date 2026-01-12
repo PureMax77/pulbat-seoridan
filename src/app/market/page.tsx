@@ -10,6 +10,12 @@ import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AdaptiveTooltip } from "@/components/adaptive-tooltip";
 
+// 날짜별 가격 정보
+interface PriceWithDate {
+  date: string;
+  price: string;
+}
+
 // 개별 품목 가격 정보
 interface PriceItem {
   item_name: string;
@@ -33,6 +39,7 @@ interface PriceItem {
   dpr6: string;
   day7: string;
   dpr7: string;
+  priceHistory: PriceWithDate[]; // 4일치 가격 이력 (최신순)
 }
 
 // API 응답 데이터
@@ -55,7 +62,26 @@ export default function MarketPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isFilterExpanded, setIsFilterExpanded] = useState(true);
-  const [priceDate, setPriceDate] = useState<string>("");
+
+  // 가격 기준 날짜 계산 (첫 번째 품목의 최신 가격 날짜)
+  const priceBaseDate = useMemo(() => {
+    if (allPriceData.length === 0) return null;
+
+    // 첫 번째 품목의 priceHistory에서 가격이 있는 가장 최신 날짜 찾기
+    const firstItem = allPriceData[0];
+    if (!firstItem.priceHistory || firstItem.priceHistory.length === 0) return null;
+
+    const latestPrice = firstItem.priceHistory.find(p => p.price && p.price !== "-");
+    if (!latestPrice) return null;
+
+    // YYYY-MM-DD -> YYYY년 MM월 DD일 형식으로 변환
+    const date = new Date(latestPrice.date);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+
+    return `${year}년 ${month}월 ${day}일`;
+  }, [allPriceData]);
 
   // API 재요청이 필요한 필터 (지역만)
   const apiFilters = useMemo(() => ({
@@ -84,12 +110,6 @@ export default function MarketPage() {
 
       if (!response.ok) {
         throw new Error("가격 정보를 불러오는데 실패했습니다.");
-      }
-
-      // 헤더에서 조회 날짜 가져오기
-      const dateFromHeader = response.headers.get("X-Price-Date");
-      if (dateFromHeader) {
-        setPriceDate(dateFromHeader);
       }
 
       const data: KamisApiResponse = await response.json();
@@ -254,11 +274,11 @@ export default function MarketPage() {
               content={
                 <>
                   <p className="leading-relaxed">
-                    토요일, 일요일은 가격 집계가 되지 않아 금요일 날짜 기준의 가격으로 표시됩니다.
+                    가격 집계가 진행 중이거나 불가능한 경우(주말) 최근 집계 날짜의 가격이 표시됩니다.
                   </p>
-                  {priceDate && (
-                    <p className="mt-2 text-xs text-gray-300">
-                      기준 일자: {priceDate}
+                  {priceBaseDate && (
+                    <p className="mt-2 text-xs text-green-400">
+                      기준 일자: {priceBaseDate}
                     </p>
                   )}
                 </>
