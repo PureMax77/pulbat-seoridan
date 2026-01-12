@@ -23,6 +23,7 @@ import {
 import { MapPin, Leaf, Award, ChevronLeft } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { PriceChart } from "./(components)/PriceChart";
+import { normalizeCode, getCategoryCode } from "@/lib/utils";
 
 export default function MarketDetailPage() {
     const params = useParams();
@@ -32,17 +33,8 @@ export default function MarketDetailPage() {
     // path parameter에서 품목 코드 가져오기
     const itemCode = params.item as string;
 
-    // 부류 코드 계산 (품목 코드의 첫 번째 자리 + "00")
-    // 예외: 422번(방울토마토)만 400이 아니라 200으로 변환
-    const categoryCode = itemCode
-        ? (itemCode === "422" ? "200" : itemCode.charAt(0) + "00")
-        : "";
-
-    // 등급 코드 정규화하여 찾기 (앞의 0 제거)
-    const normalizeCode = (code: string) => {
-        const num = parseInt(code, 10);
-        return isNaN(num) ? code : String(num);
-    };
+    // 부류 코드 계산
+    const categoryCode = itemCode ? getCategoryCode(itemCode) : "";
 
     // 쿼리 파라미터에서 값 가져오기
     const kindCodeFromQuery = searchParams.get("p_kindcode");

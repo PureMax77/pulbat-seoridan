@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { getItemImagePath } from "@/constants/kamis-codemap";
+import { normalizeCode } from "@/lib/utils";
 
 // 날짜별 가격 정보
 interface PriceWithDate {
@@ -56,10 +57,6 @@ export function PriceCard({ item, countryCode }: PriceCardProps) {
 
     const handleClick = () => {
         // 등급 코드 정규화 (앞의 0 제거)
-        const normalizeCode = (code: string) => {
-            const num = parseInt(code, 10);
-            return isNaN(num) ? code : String(num);
-        };
         const normalizedRankCode = normalizeCode(item.rank_code);
 
         // 쿼리 파라미터 구성 (품목 코드는 path parameter로, 부류 코드는 품목 코드로부터 계산 가능하므로 제외)

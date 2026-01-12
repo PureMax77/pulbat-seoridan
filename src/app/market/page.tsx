@@ -9,6 +9,7 @@ import { BarChart3, Loader2, AlertCircle } from "lucide-react";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AdaptiveTooltip } from "@/components/adaptive-tooltip";
+import { normalizeCode, getCategoryCode, getLatestPriceDate } from "@/lib/utils";
 
 // 날짜별 가격 정보
 interface PriceWithDate {
@@ -69,21 +70,7 @@ export default function MarketPage() {
   // 가격 기준 날짜 계산 (첫 번째 품목의 최신 가격 날짜)
   const priceBaseDate = useMemo(() => {
     if (allPriceData.length === 0) return null;
-
-    // 첫 번째 품목의 priceHistory에서 가격이 있는 가장 최신 날짜 찾기
-    const firstItem = allPriceData[0];
-    if (!firstItem.priceHistory || firstItem.priceHistory.length === 0) return null;
-
-    const latestPrice = firstItem.priceHistory.find(p => p.price && p.price !== "-");
-    if (!latestPrice) return null;
-
-    // YYYY-MM-DD -> YYYY년 MM월 DD일 형식으로 변환
-    const date = new Date(latestPrice.date);
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-
-    return `${year}년 ${month}월 ${day}일`;
+    return getLatestPriceDate(allPriceData[0].priceHistory);
   }, [allPriceData]);
 
   // API 재요청이 필요한 필터 (지역만)
@@ -135,7 +122,7 @@ export default function MarketPage() {
       // 품목 추출
       const itemKey = `${item.item_code}`;
       if (!items.has(itemKey)) {
-        const categoryCode = item.item_code.charAt(0) + "00";
+        const categoryCode = getCategoryCode(item.item_code);
         items.set(itemKey, {
           code: item.item_code,
           name: item.item_name,
@@ -179,8 +166,7 @@ export default function MarketPage() {
     // 부류 필터링 (전체 부류가 아닌 경우에만)
     if (filters.category && filters.category.code !== "all") {
       filtered = filtered.filter(item => {
-        // item_code의 첫 번째 자리로 부류 판단 (예: 111 -> 100, 211 -> 200)
-        const categoryCode = item.item_code.charAt(0) + "00";
+        const categoryCode = getCategoryCode(item.item_code);
         return categoryCode === filters.category!.code;
       });
     }
@@ -197,11 +183,6 @@ export default function MarketPage() {
 
     // 등급 필터링
     if (filters.rank) {
-      // rank_code를 정규화하여 비교 (앞의 0 제거)
-      const normalizeCode = (code: string) => {
-        const num = parseInt(code, 10);
-        return isNaN(num) ? code : String(num);
-      };
       const selectedCode = normalizeCode(filters.rank.code);
       const selectedName = filters.rank.name;
 
