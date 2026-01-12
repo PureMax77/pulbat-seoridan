@@ -53,7 +53,7 @@ export default function MarketDetailPage() {
     const defaultKind = availableKinds.length > 0 ? availableKinds[0] : null;
     const selectedKindCode = kindCodeFromQuery || defaultKind?.code || "";
     const selectedKind = availableKinds.find(kind => kind.code === selectedKindCode) || defaultKind;
-    console.log(selectedKind);
+
     // 등급 기본값 계산 (품종에 따라 다를 수 있음)
     const comboKey = selectedKindCode ? `${categoryCode}|${itemCode}|${selectedKindCode}` : "";
     const availableRanks = comboKey && comboRetailRanksFlat[comboKey]
@@ -76,7 +76,7 @@ export default function MarketDetailPage() {
     const kindName = initialKindName;
     const rankName = initialRankName;
     const imagePath = `/fruit-images/${getItemImagePath(itemCode)}`;
-    console.log(itemName, categoryCode)
+
     // URL에서 query 제거 (한 번만 실행)
     useEffect(() => {
         // URL에서 query 제거 (history에 남지 않도록 replace 사용)

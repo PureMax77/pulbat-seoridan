@@ -54,6 +54,9 @@ interface KamisApiResponse {
 }
 
 export default function MarketPage() {
+  // 우선순위 품목 배열 (앞쪽에 표시될 품목들)
+  const priorityItems = ['배', '단감', '딸기', '레몬', '망고', '멜론', '바나나', '호박'];
+
   const [filters, setFilters] = useState<FilterState>({
     category: { code: "all", name: "전체 부류" }
   });
@@ -210,6 +213,27 @@ export default function MarketPage() {
         return matchByCode || matchByName;
       });
     }
+
+    // 우선순위 품목을 앞쪽으로, 나머지는 한글 순서로 정렬
+    filtered.sort((a, b) => {
+      const aIndex = priorityItems.indexOf(a.item_name);
+      const bIndex = priorityItems.indexOf(b.item_name);
+
+      // 둘 다 우선순위 품목인 경우 우선순위 배열의 순서대로
+      if (aIndex !== -1 && bIndex !== -1) {
+        return aIndex - bIndex;
+      }
+      // a만 우선순위 품목인 경우
+      if (aIndex !== -1) {
+        return -1;
+      }
+      // b만 우선순위 품목인 경우
+      if (bIndex !== -1) {
+        return 1;
+      }
+      // 둘 다 우선순위 품목이 아닌 경우 한글 순서로 정렬
+      return a.item_name.localeCompare(b.item_name, 'ko');
+    });
 
     return filtered;
   }, [allPriceData, filters.category, filters.item, filters.kind, filters.rank]);
