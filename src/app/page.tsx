@@ -1,8 +1,10 @@
 import { AppLayout } from "@/components/app-layout";
-import { Sparkles, Rocket, TrendingUp, Percent } from "lucide-react";
+import { Sparkles, Rocket, TrendingUp, Percent, ArrowRight } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -20,20 +22,29 @@ export default function Home() {
                 </Avatar>
               </div>
               <CardTitle className="text-2xl bg-linear-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-                홈 화면 준비중
+                시세페이지 우선작업중
               </CardTitle>
               <CardDescription className="text-base mt-2">
-                오늘의 추천 농산물과 특가 정보를<br />
-                곧 만나보실 수 있어요! 🥬
+                시세 정보를 확인하실 수 있습니다<br />
+                시세 페이지로 이동해보세요! 🥬
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
               <div className="flex justify-center gap-2">
                 <Badge variant="secondary" className="flex items-center gap-1">
                   <Sparkles className="w-3 h-3" />
                   Coming Soon
                 </Badge>
               </div>
+              <Link href="/market" className="block">
+                <Button
+                  className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 cursor-pointer"
+                  size="lg"
+                >
+                  시세 페이지로 이동
+                  <ArrowRight className="w-5 h-5" />
+                </Button>
+              </Link>
             </CardContent>
           </Card>
 
