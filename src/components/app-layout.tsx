@@ -62,6 +62,7 @@ export function AppLayout({ children }: AppLayoutProps) {
               <a
                 href="tel:1522-6585"
                 className="text-2xl font-bold text-red-500 hover:text-red-600 transition-colors flex items-center gap-2 group"
+                aria-label="고객센터 전화하기: 1522-1522"
               >
                 📞 1522-1522
                 <span className="text-sm font-normal text-gray-500 group-hover:text-red-500 transition-colors">
@@ -78,7 +79,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         {/* 헤더 */}
         <header className="sticky top-0 bg-white/95 backdrop-blur-md border-b border-gray-200 z-40 px-5 py-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <Link href="/" className="cursor-pointer hover:opacity-80 transition-opacity">
+            <Link href="/" className="cursor-pointer hover:opacity-80 transition-opacity" aria-label="홈으로 이동">
               <div className="w-9 h-9 bg-linear-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-md shadow-green-500/30">
                 <Leaf className="w-5 h-5 text-white" />
               </div>

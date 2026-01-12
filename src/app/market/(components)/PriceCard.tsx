@@ -60,6 +60,15 @@ export function PriceCard({ item, countryCode }: PriceCardProps) {
         <Card
             className="hover:shadow-md transition-shadow hover:cursor-pointer"
             onClick={handleClick}
+            role="button"
+            tabIndex={0}
+            aria-label={`${item.item_name} ${item.kind_name} ${item.rank} 가격 정보 보기`}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    handleClick();
+                }
+            }}
         >
             <CardContent className="p-4">
                 <div className="flex justify-between items-start">

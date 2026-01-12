@@ -61,6 +61,7 @@ export function FilterBar({ filters, onFilterChange, onOpenBottomSheet, classNam
                     onClick={toggleExpanded}
                     variant="ghost"
                     className="flex items-center gap-2 text-lg font-semibold px-0"
+                    aria-label={isExpanded ? "필터 접기" : "필터 펼치기"}
                 >
                     {hasVisibleFilters && (
                         <>
@@ -76,6 +77,7 @@ export function FilterBar({ filters, onFilterChange, onOpenBottomSheet, classNam
                 <Button
                     onClick={onOpenBottomSheet}
                     className="flex items-center gap-2 bg-linear-to-br from-blue-500 to-blue-600"
+                    aria-label="필터 선택 메뉴 열기"
                 >
                     <Filter className="w-4 h-4 text-white" />
                 </Button>

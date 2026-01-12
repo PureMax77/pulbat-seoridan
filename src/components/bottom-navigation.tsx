@@ -32,6 +32,7 @@ export function BottomNavigation() {
                   ? "text-green-600"
                   : "text-gray-500 hover:text-green-600 hover:bg-green-50"
               )}
+              aria-label={item.label}
             >
               {isActive && (
                 <div className="absolute top-1 w-12 h-1 bg-linear-to-r from-green-500 to-green-600 rounded-full" />
