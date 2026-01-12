@@ -202,15 +202,18 @@ export async function GET(request: NextRequest) {
         });
 
         // 각 품목의 priceHistory를 날짜 내림차순으로 정렬 (최신순)
-        const allItems = Array.from(mergedItemsMap.values()).map(item => ({
-            ...item,
-            priceHistory: item.priceHistory
-                .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-                // 중복 날짜 제거 (날짜별로 첫 번째 가격만 유지)
-                .filter((price, index, self) =>
-                    index === self.findIndex(p => p.date === price.date)
-                )
-        }));
+        const allItems = Array.from(mergedItemsMap.values())
+            .map(item => ({
+                ...item,
+                priceHistory: item.priceHistory
+                    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+                    // 중복 날짜 제거 (날짜별로 첫 번째 가격만 유지)
+                    .filter((price, index, self) =>
+                        index === self.findIndex(p => p.date === price.date)
+                    )
+            }))
+            // priceHistory가 비어있는 품목 제외
+            .filter(item => item.priceHistory.length > 0);
 
         console.log(`[KAMIS API 통합] 총 ${allItems.length}개 품목, 날짜: ${requestDates.join(', ')}`);
 
