@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, ReactNode } from "react";
+import { useState, ReactNode } from "react";
 import {
     Tooltip,
     TooltipContent,
@@ -12,6 +12,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 /**
  * AdaptiveTooltip 컴포넌트
@@ -84,49 +85,6 @@ interface AdaptiveTooltipProps {
 }
 
 /**
- * useMediaQuery Hook
- * 
- * 미디어 쿼리 매칭 상태를 추적하는 커스텀 훅입니다.
- * 
- * @param query - CSS 미디어 쿼리 문자열
- *   - 예: "(hover: none)" - 터치 기기 감지
- *   - 예: "(min-width: 768px)" - 화면 크기 감지
- * @returns 미디어 쿼리가 매칭되는지 여부
- * 
- * 주의사항:
- * - SSR/SSG 환경에서 hydration mismatch를 방지하기 위해 mounted 상태 사용
- * - 구형 브라우저 호환성을 위한 fallback 포함
- */
-const useMediaQuery = (query: string): boolean => {
-    const [matches, setMatches] = useState(false);
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => {
-        setMounted(true);
-        const media = window.matchMedia(query);
-        setMatches(media.matches);
-
-        const listener = (event: MediaQueryListEvent) => {
-            setMatches(event.matches);
-        };
-
-        // Modern browsers - addEventListener 사용
-        if (media.addEventListener) {
-            media.addEventListener("change", listener);
-            return () => media.removeEventListener("change", listener);
-        }
-        // Fallback for older browsers - addListener 사용 (deprecated)
-        else {
-            media.addListener(listener);
-            return () => media.removeListener(listener);
-        }
-    }, [query]);
-
-    // 마운트되기 전에는 false 반환하여 SSR/CSR 불일치 방지
-    return mounted ? matches : false;
-};
-
-/**
  * AdaptiveTooltip 컴포넌트 구현
  */
 export const AdaptiveTooltip = ({
@@ -141,7 +99,12 @@ export const AdaptiveTooltip = ({
     const [isOpen, setIsOpen] = useState(false);
 
     // 호버가 불가능한 모든 환경(대부분의 모바일/태블릿)을 잡아냄
-    const isTouchDevice = useMediaQuery("(hover: none)");
+    const { matches: isTouchDevice, mounted } = useMediaQuery("(hover: none)");
+
+    // 마운트되기 전에는 트리거만 렌더링하여 불필요한 리렌더링 방지
+    if (!mounted) {
+        return <div className={className}>{trigger}</div>;
+    }
 
     // 터치 기기: Popover 사용 (클릭 기반)
     if (isTouchDevice) {
