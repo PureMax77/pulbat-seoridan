@@ -17,6 +17,7 @@ import {
 import { Line } from "react-chartjs-2";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Loader2 } from "lucide-react";
 
 // Chart.js 등록
 ChartJS.register(
@@ -257,8 +258,10 @@ export function PriceChart({ categoryCode, itemCode, kindCode, rankCode, country
             </CardHeader>
             <CardContent>
                 {loading && (
-                    <div className="flex items-center justify-center h-[300px]">
+                    <div className="flex flex-col items-center justify-center h-[300px] gap-3">
+                        <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
                         <p className="text-gray-500">데이터를 불러오는 중...</p>
+                        <p className="text-gray-500 text-sm">(기간이 길수록 시간이 소요될 수 있습니다)</p>
                     </div>
                 )}
 
