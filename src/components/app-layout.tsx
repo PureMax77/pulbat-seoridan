@@ -75,9 +75,9 @@ export function AppLayout({ children }: AppLayoutProps) {
       </aside>
 
       {/* 메인 컨텐츠 영역 - 420px 고정 */}
-      <main className="w-full lg:w-[420px] bg-white min-h-screen flex flex-col relative shadow-2xl">
-        {/* 헤더 */}
-        <header className="sticky top-0 bg-white/95 backdrop-blur-md border-b border-gray-200 z-40 px-5 py-4 shadow-sm">
+      <div className="w-full lg:w-[420px] bg-white min-h-screen flex flex-col relative shadow-2xl">
+        {/* 헤더 - 고정 위치 (오버스크롤에 영향받지 않음) */}
+        <header className="fixed top-0 left-0 right-0 lg:left-auto lg:right-auto lg:w-[420px] bg-white/95 backdrop-blur-md border-b border-gray-200 z-50 px-5 py-4 shadow-sm">
           <div className="flex items-center gap-3">
             <Link href="/" className="cursor-pointer hover:opacity-80 transition-opacity" aria-label="홈으로 이동">
               <div className="w-9 h-9 bg-linear-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-md shadow-green-500/30">
@@ -90,12 +90,16 @@ export function AppLayout({ children }: AppLayoutProps) {
           </div>
         </header>
 
-        {/* 페이지 컨텐츠 */}
-        <div className="flex-1 pb-16">{children}</div>
+        {/* 페이지 컨텐츠 - 오버스크롤 방지 */}
+        <main className="flex-1 pt-[65px] pb-16 overscroll-none">
+          <div className="overscroll-contain">
+            {children}
+          </div>
+        </main>
 
         {/* 하단 네비게이션 */}
         <BottomNavigation />
-      </main>
+      </div>
 
       {/* 우측 빈 공간 (대칭을 위해) */}
       <div className="hidden lg:block lg:flex-1" />
