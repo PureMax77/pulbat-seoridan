@@ -1,0 +1,22 @@
+// prisma/schema.prisma
+generator client {
+    provider = "prisma-client"
+    output   = "../generated/prisma"
+}
+
+datasource db {
+    provider = "postgresql"
+}
+
+model ProductPrice {
+    id          String   @id @default(cuid())
+    storeName   String // 예: "Homeplus", "Emart"
+    productName String
+    price       Int
+    keyword     String? // 검색에 사용된 키워드 (예: "사과")
+    url         String?
+    scrapedAt   DateTime @default(now())
+
+    @@index([storeName, scrapedAt])
+    @@index([keyword])
+}
