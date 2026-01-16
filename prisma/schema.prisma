@@ -1,7 +1,7 @@
 // prisma/schema.prisma
 generator client {
-    provider = "prisma-client"
-    output   = "../generated/prisma"
+    provider = "prisma-client-js"
+    output   = "../node_modules/@prisma/custom-client" // node_modules 밖으로 선언하면 오류 발생
 }
 
 datasource db {
@@ -9,13 +9,17 @@ datasource db {
 }
 
 model ProductPrice {
-    id          String   @id @default(cuid())
-    storeName   String // 예: "Homeplus", "Emart"
-    productName String
-    price       Int
-    keyword     String? // 검색에 사용된 키워드 (예: "사과")
-    url         String?
-    scrapedAt   DateTime @default(now())
+    id           String   @id @default(cuid())
+    storeName    String // 예: "Homeplus", "Emart"
+    productName  String // 상품 이름
+    price        Int // 가격 (할인 있다면 반영된 최종 가격)
+    keyword      String // 검색에 사용된 키워드 (예: "사과", "배")
+    discountRate Float? // 할인율 (%)
+    weight       Float? // 무게 (그램 단위)
+    quantity     Int? // 개수 (예: "1개", "5~7개")
+    unitPrice    Float? // 그램당 또는 개당 가격
+    url          String? // 상품 상세 페이지 URL
+    scrapedAt    DateTime @default(now())
 
     @@index([storeName, scrapedAt])
     @@index([keyword])
