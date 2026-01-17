@@ -10,6 +10,7 @@ import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AdaptiveTooltip } from "@/components/adaptive-tooltip";
 import { normalizeCode, getCategoryCode, getLatestPriceDate } from "@/lib/utils";
+import AnimatedList from "@/components/AnimatedList";
 
 // 날짜별 가격 정보
 interface PriceWithDate {
@@ -245,7 +246,7 @@ export default function MarketPage() {
 
   return (
     <AppLayout>
-      <div className="min-h-screen bg-gray-50">
+      <div className="h-[calc(100vh-70px)] bg-gray-50 flex flex-col overflow-hidden">
         {/* 필터 영역 - 고정 (헤더 아래) */}
         <div className="fixed top-[69px] left-0 right-0 bg-white border-b z-30 lg:left-1/2 lg:-translate-x-1/2 lg:w-[420px]">
           <div className="px-4 py-2">
@@ -259,12 +260,12 @@ export default function MarketPage() {
         </div>
 
         {/* 필터 영역 높이만큼 여백 추가 */}
-        <div className={isFilterExpanded && hasVisibleFilters ? "h-30" : "h-12"}></div>
+        <div className={`shrink-0 ${isFilterExpanded && hasVisibleFilters ? "h-30" : "h-12"}`}></div>
 
         {/* 메인 콘텐츠 */}
-        <div className="max-w-4xl mx-auto p-4">
+        <div className="max-w-4xl mx-auto p-4 flex-1 flex flex-col overflow-hidden w-full">
           {/* 제목 영역 - 항상 표시 */}
-          <div className="mb-4 flex items-center gap-2">
+          <div className="mb-4 flex items-center gap-2 shrink-0">
             <h1 className="text-2xl font-bold text-gray-800">오늘의 농산물 소매가</h1>
             <AdaptiveTooltip
               trigger={
@@ -294,47 +295,55 @@ export default function MarketPage() {
           </div>
 
           {/* 콘텐츠 영역 */}
-          {loading ? (
-            <Card className="flex flex-col items-center justify-center min-h-[calc(100vh-20rem)] border-0 shadow-none">
-              <CardContent className="flex flex-col items-center p-6">
-                <Loader2 className="w-12 h-12 text-blue-500 animate-spin mb-4" />
-                <p className="text-muted-foreground">농산물 가격 정보를 불러오는 중...</p>
-              </CardContent>
-            </Card>
-          ) : error ? (
-            <Card className="flex flex-col items-center justify-center min-h-[calc(100vh-20rem)]">
-              <CardContent className="text-center space-y-4 p-6">
-                <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto">
-                  <BarChart3 className="w-8 h-8 text-red-500" />
-                </div>
-                <CardTitle className="text-xl">오류가 발생했습니다</CardTitle>
-                <p className="text-muted-foreground">{error}</p>
-                <Button onClick={fetchPriceData} variant="default">
-                  다시 시도
-                </Button>
-              </CardContent>
-            </Card>
-          ) : filteredPriceData.length === 0 ? (
-            <Card className="flex flex-col items-center justify-center min-h-[calc(100vh-20rem)]">
-              <CardContent className="text-center space-y-4 p-6">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto">
-                  <BarChart3 className="w-8 h-8 text-gray-400" />
-                </div>
-                <CardTitle className="text-xl">검색 결과가 없습니다</CardTitle>
-                <p className="text-muted-foreground">다른 필터 조건을 선택해보세요</p>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="space-y-3 pb-6">
-              {filteredPriceData.map((item, index) => (
-                <PriceCard
-                  key={`${item.item_code}-${item.kind_code}-${item.rank_code}-${index}`}
-                  item={item}
-                  countryCode={filters.countryCode?.code}
-                />
-              ))}
-            </div>
-          )}
+          <div className="flex-1 overflow-hidden relative">
+            {loading ? (
+              <Card className="flex flex-col items-center justify-center h-full border-0 shadow-none">
+                <CardContent className="flex flex-col items-center p-6">
+                  <Loader2 className="w-12 h-12 text-blue-500 animate-spin mb-4" />
+                  <p className="text-muted-foreground">농산물 가격 정보를 불러오는 중...</p>
+                </CardContent>
+              </Card>
+            ) : error ? (
+              <Card className="flex flex-col items-center justify-center h-full">
+                <CardContent className="text-center space-y-4 p-6">
+                  <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto">
+                    <BarChart3 className="w-8 h-8 text-red-500" />
+                  </div>
+                  <CardTitle className="text-xl">오류가 발생했습니다</CardTitle>
+                  <p className="text-muted-foreground">{error}</p>
+                  <Button onClick={fetchPriceData} variant="default">
+                    다시 시도
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : filteredPriceData.length === 0 ? (
+              <Card className="flex flex-col items-center justify-center h-full">
+                <CardContent className="text-center space-y-4 p-6">
+                  <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto">
+                    <BarChart3 className="w-8 h-8 text-gray-400" />
+                  </div>
+                  <CardTitle className="text-xl">검색 결과가 없습니다</CardTitle>
+                  <p className="text-muted-foreground">다른 필터 조건을 선택해보세요</p>
+                </CardContent>
+              </Card>
+            ) : (
+              <AnimatedList
+                items={filteredPriceData}
+                renderItem={(item) => (
+                  <PriceCard
+                    item={item}
+                    countryCode={filters.countryCode?.code}
+                  />
+                )}
+                showGradients={false}
+                enableArrowNavigation={false}
+                displayScrollbar={false}
+                className="w-full h-full"
+                maxHeight="h-full"
+                containerClassName="space-y-3 pb-24"
+              />
+            )}
+          </div>
         </div>
 
         {/* Bottom Sheet */}
