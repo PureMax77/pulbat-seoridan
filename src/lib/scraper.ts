@@ -22,11 +22,13 @@ export async function scrapeProductPrices(
     console.log(`Starting scrape for ${storeName} - ${keyword}...`);
 
     const stagehand = new Stagehand({
-        // env: "BROWSERBASE",
-        env: "LOCAL",
+        env: process.env.VERCEL ? "BROWSERBASE" : "LOCAL",
         model: "openai/gpt-5-mini",
-        verbose: 2,
-        logInferenceToFile: true,  // ./inference_summary/ 폴더에 저장
+
+        // 디버깅 옵션
+        // verbose: 2,
+        // logInferenceToFile: true,
+
         // 쿠팡에서 상품 Link ID를 잘못 추출하는 경우 개선 시도 했던 임시 추가 시스템 프롬프트
         //         systemPrompt: `You are a precise data extractor.
         // IMPORTANT RULE FOR LINK (URL) EXTRACTION:
