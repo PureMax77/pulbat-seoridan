@@ -5,7 +5,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { BasketData } from '@/lib/actions/market-data';
 import { cn } from '@/lib/utils';

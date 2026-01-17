@@ -218,7 +218,7 @@ export default function MarketPage() {
     });
 
     return filtered;
-  }, [allPriceData, filters.category, filters.item, filters.kind, filters.rank]);
+  }, [allPriceData, filters.category, filters.item, filters.kind, filters.rank, priorityItems]);
 
   const handleFilterChange = (newFilters: FilterState) => {
     setFilters(newFilters);

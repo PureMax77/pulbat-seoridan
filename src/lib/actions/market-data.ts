@@ -27,7 +27,10 @@ async function getLatestScrapeDateRange() {
 export async function getBestDeals() {
   const dateRange = await getLatestScrapeDateRange();
 
-  const where: any = {
+  const where: {
+    discountRate: { not: null };
+    scrapedAt?: { gte: Date; lte: Date };
+  } = {
     discountRate: {
       not: null,
     },
