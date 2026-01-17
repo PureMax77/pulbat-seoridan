@@ -9,7 +9,8 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "postinstall": "prisma generate",
+    "build": "prisma migrate deploy && next build",
     "start": "next start",
     "lint": "eslint"
   },
