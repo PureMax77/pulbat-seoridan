@@ -46,7 +46,7 @@ export function BestDeals({ products }: BestDealsProps) {
                 )}
               </div>
 
-              <h3 className="font-medium text-sm leading-tight mb-2 line-clamp-2 min-h-[2.5rem]">
+              <h3 className="font-medium text-sm leading-tight mb-2 line-clamp-2 min-h-10">
                 {product.productName}
               </h3>
 
