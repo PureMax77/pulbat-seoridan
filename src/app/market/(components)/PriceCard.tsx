@@ -73,7 +73,7 @@ export function PriceCard({ item, countryCode }: PriceCardProps) {
 
     return (
         <Card
-            className="hover:shadow-md transition-shadow hover:cursor-pointer"
+            className="hover:shadow-md transition-shadow hover:cursor-pointer bg-white"
             onClick={handleClick}
             role="button"
             tabIndex={0}
