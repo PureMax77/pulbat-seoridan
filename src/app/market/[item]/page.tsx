@@ -67,7 +67,7 @@ export default function MarketDetailPage() {
     const itemName = initialItemName;
     const kindName = initialKindName;
     const rankName = initialRankName;
-    const imagePath = `/fruit-images/${getItemImagePath(itemCode)}`;
+    const imagePath = `/images/fruit/${getItemImagePath(itemCode)}`;
 
     // URL에서 query 제거 (한 번만 실행)
     useEffect(() => {

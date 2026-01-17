@@ -49,7 +49,7 @@ const getLatestPrice = (priceHistory: PriceWithDate[] | undefined) => {
 
 export function PriceCard({ item, countryCode }: PriceCardProps) {
     const router = useRouter();
-    const imagePath = `/fruit-images/${getItemImagePath(item.item_code)}`;
+    const imagePath = `/images/fruit/${getItemImagePath(item.item_code)}`;
 
     // 4일치 데이터 중 가장 최신 유효한 가격 찾기
     const latestPriceData = getLatestPrice(item.priceHistory);
