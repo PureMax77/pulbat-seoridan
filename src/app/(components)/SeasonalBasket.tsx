@@ -69,7 +69,7 @@ export function SeasonalBasket({ initialData }: SeasonalBasketProps) {
                 id={`keyword-${keyword}`}
                 checked={selectedKeywords.includes(keyword)}
                 onCheckedChange={() => toggleKeyword(keyword)}
-                className="w-4 h-4"
+                className="w-4 h-4 cursor-pointer"
               />
               <label
                 htmlFor={`keyword-${keyword}`}
