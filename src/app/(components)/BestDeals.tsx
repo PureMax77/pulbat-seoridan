@@ -62,6 +62,7 @@ export function BestDeals({ products }: BestDealsProps) {
                           src={`/images/store/${product.storeName}.png`}
                           alt={product.storeName}
                           fill
+                          priority
                           sizes="20px"
                           className="object-contain p-0.5"
                         />
