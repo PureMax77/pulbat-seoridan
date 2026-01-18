@@ -30,7 +30,7 @@ export function CategoryComparison({ data }: CategoryComparisonProps) {
               <TabsTrigger
                 key={item.keyword}
                 value={item.keyword}
-                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-3 py-1.5 rounded-full border bg-white text-sm"
+                className="data-[state=active]:bg-green-500 data-[state=active]:text-white data-[state=active]:border-green-600 px-3 py-1.5 rounded-full border border-gray-200 bg-white text-sm text-gray-700 transition-colors cursor-pointer"
               >
                 {item.keyword}
               </TabsTrigger>
