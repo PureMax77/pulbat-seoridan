@@ -63,7 +63,6 @@ function CircularCardInner<T>(
   ref: React.Ref<CircularCardRef>
 ) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [width, setWidth] = useState(0);
 
   // 3D Carousel 설정 계산
   const count = items.length;
@@ -110,12 +109,13 @@ function CircularCardInner<T>(
     }
   }));
 
-  // 컨테이너 크기 변경 감지
+  // 컨테이너 크기 변경 감지 (현재는 사용하지 않지만 향후 확장을 위해 유지)
   useEffect(() => {
     if (!containerRef.current) return;
     const updateWidth = () => {
+      // 향후 컨테이너 크기 기반 로직이 필요할 경우 사용
       if (containerRef.current) {
-        setWidth(containerRef.current.offsetWidth);
+        // const width = containerRef.current.offsetWidth;
       }
     };
     updateWidth();

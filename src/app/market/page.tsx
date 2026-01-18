@@ -57,7 +57,7 @@ interface KamisApiResponse {
 
 export default function MarketPage() {
   // 우선순위 품목 배열 (앞쪽에 표시될 품목들)
-  const priorityItems = ['배', '단감', '딸기', '레몬', '망고', '멜론', '바나나', '호박'];
+  const priorityItems = useMemo(() => ['배', '단감', '딸기', '레몬', '망고', '멜론', '바나나', '호박'], []);
 
   const [filters, setFilters] = useState<FilterState>({
     category: { code: "all", name: "전체 부류" }

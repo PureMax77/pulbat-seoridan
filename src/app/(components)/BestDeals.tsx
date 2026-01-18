@@ -19,6 +19,11 @@ export function BestDeals({ products }: BestDealsProps) {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const circularCardRef = useRef<CircularCardRef>(null);
 
+  // CircularCard에서 중앙 아이템이 변경될 때 호출되는 콜백
+  const handleCenterIndexChange = useCallback((index: number) => {
+    setSelectedIndex(index);
+  }, []);
+
   if (products.length === 0) {
     return (
       <div className="py-10 text-center text-gray-500 text-sm">
@@ -26,11 +31,6 @@ export function BestDeals({ products }: BestDealsProps) {
       </div>
     );
   }
-
-  // CircularCard에서 중앙 아이템이 변경될 때 호출되는 콜백
-  const handleCenterIndexChange = useCallback((index: number) => {
-    setSelectedIndex(index);
-  }, []);
 
   return (
     <div className="flex flex-col">
