@@ -44,7 +44,7 @@ export function CategoryComparison({ data }: CategoryComparisonProps) {
               {category.items.map((item, index) => (
                 <Card key={item.id} className={cn(
                   "overflow-hidden transition-all border shadow-sm",
-                  index === 0 ? "border-green-500/50 bg-green-50/50" : "border-gray-100"
+                  index === 0 ? "border-green-500/50 bg-green-50/50" : "border-gray-100 bg-white"
                 )}>
                   <CardContent className="p-3 flex items-center gap-3">
                     <div className="text-xl font-bold w-6 text-center shrink-0">

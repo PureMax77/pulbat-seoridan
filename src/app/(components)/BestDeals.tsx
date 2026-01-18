@@ -107,7 +107,7 @@ export function BestDeals({ products }: BestDealsProps) {
                 </CardContent>
                 <CardFooter className="p-2 pt-0 shrink-0">
                   {product.url ? (
-                    <Button asChild className="w-full h-8 text-xs bg-gray-200 hover:bg-gray-300 border-0 shadow-sm" size="sm">
+                    <Button asChild className="w-full h-8 text-sm bg-gray-200 hover:bg-gray-300 border-0 shadow-sm" size="sm">
                       <Link
                         href={product.url}
                         target="_blank"
@@ -115,7 +115,7 @@ export function BestDeals({ products }: BestDealsProps) {
                         className="flex items-center justify-center gap-1"
                         onPointerDown={(e) => e.stopPropagation()}
                       >
-                        구매 <ExternalLink className="w-3 h-3" />
+                        구 매 <ExternalLink className="w-3 h-3" />
                       </Link>
                     </Button>
                   ) : (
@@ -134,7 +134,7 @@ export function BestDeals({ products }: BestDealsProps) {
         <Button
           variant="outline"
           size="icon"
-          className="rounded-full w-10 h-10 shadow-sm border-gray-200 hover:bg-gray-50 hover:text-primary transition-colors cursor-pointer"
+          className="bg-white rounded-full w-10 h-10 shadow-sm border-gray-200 hover:bg-gray-50 hover:text-primary transition-colors cursor-pointer"
           onClick={() => circularCardRef.current?.prev()}
           aria-label="이전 상품"
         >
@@ -143,7 +143,7 @@ export function BestDeals({ products }: BestDealsProps) {
         <Button
           variant="outline"
           size="icon"
-          className="rounded-full w-10 h-10 shadow-sm border-gray-200 hover:bg-gray-50 hover:text-primary transition-colors cursor-pointer"
+          className="bg-white rounded-full w-10 h-10 shadow-sm border-gray-200 hover:bg-gray-50 hover:text-primary transition-colors cursor-pointer"
           onClick={() => circularCardRef.current?.next()}
           aria-label="다음 상품"
         >

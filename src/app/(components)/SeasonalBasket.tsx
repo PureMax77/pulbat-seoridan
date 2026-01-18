@@ -98,7 +98,7 @@ export function SeasonalBasket({ initialData }: SeasonalBasketProps) {
         ) : (
           rankings.map((store, index) => (
             <Card key={store.storeName} className={cn(
-              "overflow-hidden transition-all border",
+              "overflow-hidden transition-all border bg-white",
               index === 0 ? "border-green-500/30 shadow-md ring-1 ring-green-500/10" : "border-gray-200 shadow-sm"
             )}>
               <div
@@ -138,7 +138,7 @@ export function SeasonalBasket({ initialData }: SeasonalBasketProps) {
               </div>
 
               {expandedStore === store.storeName && (
-                <div className="border-t bg-gray-50/50 p-3 space-y-2 animate-in slide-in-from-top-2">
+                <div className="border-t bg-green-50 p-3 space-y-2 animate-in slide-in-from-top-2">
                   {store.products.map(product => (
                     <div key={product.id} className="flex flex-col bg-white p-2.5 rounded-lg border shadow-sm">
                       <div className="flex items-start justify-between gap-2 mb-2">

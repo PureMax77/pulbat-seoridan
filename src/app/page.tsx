@@ -19,7 +19,7 @@ export default async function Home() {
 
   return (
     <AppLayout>
-      <div className="w-full bg-gray-50/30 min-h-full pb-8">
+      <div className="w-full bg-gray-50 min-h-full pb-8">
         <div className="w-full px-5 py-6 space-y-10">
 
           <section className="space-y-3">
