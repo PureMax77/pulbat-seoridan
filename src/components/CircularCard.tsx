@@ -36,7 +36,7 @@ interface CircularCardProps<T> {
   scale?: number;
   /** 드래그 민감도 @default 0.15 */
   dragSensitivity?: number;
-  /** 드래그 후 관성 모멘텀 @default 0.01 */
+  /** 드래그 후 관성 모멘텀 @default 0.04 */
   momentumMultiplier?: number;
 }
 
@@ -58,7 +58,7 @@ function CircularCardInner<T>(
     perspective = 1000,
     scale = 1,
     dragSensitivity = 0.15,
-    momentumMultiplier = 0.01
+    momentumMultiplier = 0.04
   }: CircularCardProps<T>,
   ref: React.Ref<CircularCardRef>
 ) {
