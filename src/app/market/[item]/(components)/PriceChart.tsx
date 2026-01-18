@@ -142,30 +142,35 @@ export function PriceChart({ categoryCode, itemCode, kindCode, rankCode, country
                 ? items.filter(item => item.countyname !== "평년")
                 : items.filter(item => item.countyname === "평균");
 
-            // 날짜별로 그룹핑
-            const dateMap = new Map<string, number>();
+            // 날짜별로 그룹핑 (yyyy + regday를 함께 사용)
+            const dateMap = new Map<string, { sortKey: string; displayLabel: string; price: number }>();
 
             averageItems.forEach(item => {
-                const dateKey = `${item.regday}`;
+                const dateKey = `${item.yyyy}-${item.regday}`;
                 const priceValue = parseInt(item.price.replace(/,/g, ""), 10);
 
                 if (!isNaN(priceValue)) {
                     if (!dateMap.has(dateKey)) {
-                        dateMap.set(dateKey, priceValue);
+                        // sortKey: YYYY-MM-DD 형식으로 정렬용
+                        // displayLabel: MM/DD 형식으로 표시용
+                        const [month, day] = item.regday.split("/");
+                        const sortKey = `${item.yyyy}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+                        dateMap.set(dateKey, {
+                            sortKey,
+                            displayLabel: item.regday,
+                            price: priceValue,
+                        });
                     }
                 }
             });
 
-            // 날짜 순서로 정렬
-            const sortedDates = Array.from(dateMap.keys()).sort((a, b) => {
-                const [monthA, dayA] = a.split("/").map(Number);
-                const [monthB, dayB] = b.split("/").map(Number);
-                if (monthA !== monthB) return monthA - monthB;
-                return dayA - dayB;
+            // 날짜 순서로 정렬 (오래된 날짜부터 최신 날짜 순)
+            const sortedEntries = Array.from(dateMap.values()).sort((a, b) => {
+                return a.sortKey.localeCompare(b.sortKey);
             });
 
-            const labels = sortedDates;
-            const prices = sortedDates.map(date => dateMap.get(date)!);
+            const labels = sortedEntries.map(entry => entry.displayLabel);
+            const prices = sortedEntries.map(entry => entry.price);
 
             // Chart.js 데이터 형식으로 변환
             setChartData({
