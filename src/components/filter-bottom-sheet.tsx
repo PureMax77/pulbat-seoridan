@@ -10,18 +10,21 @@ import {
   type FilterOption,
 } from "@/constants/kamis-codemap";
 
+// 사용 가능한 품목 인터페이스
 interface AvailableItem {
   code: string;
   name: string;
   categoryCode: string;
 }
 
+// 사용 가능한 품종 인터페이스
 interface AvailableKind {
   code: string;
   name: string;
   itemCode: string;
 }
 
+// 사용 가능한 등급 인터페이스
 interface AvailableRank {
   code: string;
   name: string;
@@ -29,16 +32,34 @@ interface AvailableRank {
   kindCode: string;
 }
 
+/**
+ * FilterBottomSheet Props 인터페이스
+ */
 interface FilterBottomSheetProps {
+  /** 바텀시트 열림 여부 */
   isOpen: boolean;
+  /** 닫기 핸들러 */
   onClose: () => void;
+  /** 현재 적용된 필터 */
   filters: FilterState;
+  /** 필터 적용 핸들러 */
   onApplyFilters: (filters: FilterState) => void;
+  /** 사용 가능한 품목 데이터 목록 */
   availableItems: AvailableItem[];
+  /** 사용 가능한 품종 데이터 목록 */
   availableKinds: AvailableKind[];
+  /** 사용 가능한 등급 데이터 목록 */
   availableRanks: AvailableRank[];
 }
 
+/**
+ * FilterBottomSheet 컴포넌트
+ * 
+ * - 상세 필터 선택을 위한 바텀 시트/모달 컴포넌트입니다.
+ * - '지역'과 '농산물 분류' 두 개의 메인 탭으로 구성됩니다.
+ * - 농산물 분류는 계층적 구조(부류 > 품목 > 품종 > 등급)를 가지며, 순차적으로 선택하도록 유도합니다.
+ * - 선택된 상위 조건에 따라 하위 옵션 목록을 동적으로 필터링합니다.
+ */
 export function FilterBottomSheet({
   isOpen,
   onClose,
@@ -48,21 +69,26 @@ export function FilterBottomSheet({
   availableKinds,
   availableRanks,
 }: FilterBottomSheetProps) {
-  // 과일류를 초기값으로 설정
+  // 기본 필터 설정 (과일류를 기본으로)
   const defaultFilters: FilterState = {
     category: { code: "400", name: "과일류" }
   };
+  
+  // 로컬 필터 상태 (적용 버튼 누르기 전까지 임시 저장)
   const [localFilters, setLocalFilters] = useState<FilterState>(filters.category ? filters : defaultFilters);
+  // 현재 활성화된 탭 (지역 vs 농산물 분류)
   const [activeTab, setActiveTab] = useState<"region" | "product">("region");
+  // 확장된 섹션 관리 (Set으로 다중 열림 지원)
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
     new Set(["region", "category"])
   );
 
+  // 부모의 filters prop이 변경되면 로컬 상태 동기화
   useEffect(() => {
     setLocalFilters(filters);
   }, [filters]);
 
-  // 바텀시트가 열릴 때 body 스크롤 막기
+  // 바텀시트가 열릴 때 body 스크롤 막기 (모달 뒤 배경 스크롤 방지)
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -76,7 +102,7 @@ export function FilterBottomSheet({
     };
   }, [isOpen]);
 
-  // 선택된 부류에 따라 품목 필터링
+  // 선택된 부류에 따라 품목 필터링 (메모이제이션으로 성능 최적화)
   const filteredItems = useMemo(() => {
     if (!localFilters.category || localFilters.category.code === "all") {
       return availableItems;
@@ -92,7 +118,7 @@ export function FilterBottomSheet({
     return availableKinds.filter(kind => kind.itemCode === localFilters.item!.code);
   }, [availableKinds, localFilters.item]);
 
-  // 선택된 품목+품종에 따라 등급 필터링 (품목과 품종이 모두 선택되어야 함)
+  // 선택된 품목+품종에 따라 등급 필터링
   const filteredRanks = useMemo(() => {
     if (!localFilters.item || !localFilters.kind) {
       return [];
@@ -102,6 +128,7 @@ export function FilterBottomSheet({
     );
   }, [availableRanks, localFilters.item, localFilters.kind]);
 
+  // 아코디언 섹션 토글 핸들러
   const toggleSection = (section: string) => {
     const newExpanded = new Set(expandedSections);
     if (newExpanded.has(section)) {
@@ -112,6 +139,10 @@ export function FilterBottomSheet({
     setExpandedSections(newExpanded);
   };
 
+  /**
+   * 필터 업데이트 핸들러
+   * 상위 카테고리 변경 시 하위 카테고리 초기화 및 섹션 자동 펼침 로직 포함
+   */
   const updateFilter = (
     type: keyof FilterState,
     value: FilterOption | undefined
@@ -121,7 +152,7 @@ export function FilterBottomSheet({
     if (value) {
       newFilters[type] = value;
 
-      // 연관 필터 초기화 및 다음 단계 섹션 펼치기
+      // 연관 필터 초기화 및 다음 단계 섹션 자동 펼치기
       if (type === "category") {
         delete newFilters.item;
         delete newFilters.kind;
@@ -167,11 +198,13 @@ export function FilterBottomSheet({
     setLocalFilters(newFilters);
   };
 
+  // 필터 적용 및 닫기
   const handleApply = () => {
     onApplyFilters(localFilters);
     onClose();
   };
 
+  // 필터 초기화
   const handleReset = () => {
     setLocalFilters(defaultFilters);
   };
@@ -180,10 +213,10 @@ export function FilterBottomSheet({
 
   return (
     <div className="fixed inset-0 z-60">
-      {/* Backdrop */}
+      {/* Backdrop (배경 클릭 시 닫기) */}
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
 
-      {/* Bottom Sheet */}
+      {/* Bottom Sheet 컨테이너 */}
       <div className="absolute bottom-0 left-0 right-0 lg:left-1/2 lg:right-auto lg:w-[420px] lg:-translate-x-1/2 bg-white rounded-t-2xl lg:rounded-2xl shadow-2xl max-h-[80vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
@@ -197,7 +230,7 @@ export function FilterBottomSheet({
           </button>
         </div>
 
-        {/* Tabs */}
+        {/* 메인 탭 (지역 vs 농산물 분류) */}
         <div className="flex border-b" role="tablist">
           <button
             onClick={() => setActiveTab("region")}
@@ -229,7 +262,7 @@ export function FilterBottomSheet({
           </button>
         </div>
 
-        {/* Content */}
+        {/* Content Area */}
         <div className="overflow-y-auto flex-1">
           <div className="p-4">
             {/* 지역 탭 콘텐츠 */}
@@ -271,7 +304,7 @@ export function FilterBottomSheet({
             {activeTab === "product" && (
               <div role="tabpanel" id="product-tabpanel">
                 <div className="space-y-4">
-                  {/* 부류 선택 */}
+                  {/* 1단계: 부류 선택 */}
                   <div className="space-y-3">
                     <button
                       onClick={() => toggleSection("category")}
@@ -306,7 +339,7 @@ export function FilterBottomSheet({
                     )}
                   </div>
 
-                  {/* 품목 선택 */}
+                  {/* 2단계: 품목 선택 (부류가 선택된 경우에만 표시) */}
                   {localFilters.category && (
                     <div className="space-y-3">
                       <button
@@ -356,7 +389,7 @@ export function FilterBottomSheet({
                     </div>
                   )}
 
-                  {/* 품종 선택 */}
+                  {/* 3단계: 품종 선택 (품목이 선택된 경우에만 표시) */}
                   {localFilters.item && (
                     <div className="space-y-3">
                       <button
@@ -404,7 +437,7 @@ export function FilterBottomSheet({
                     </div>
                   )}
 
-                  {/* 등급 선택 */}
+                  {/* 4단계: 등급 선택 (품종이 선택된 경우에만 표시) */}
                   {localFilters.kind && (
                     <div className="space-y-3">
                       <button
@@ -457,7 +490,7 @@ export function FilterBottomSheet({
           </div>
         </div>
 
-        {/* Footer */}
+        {/* Footer: 초기화 및 적용 버튼 */}
         <div className="flex gap-3 p-4 border-t bg-gray-50 mt-auto">
           <button
             onClick={handleReset}

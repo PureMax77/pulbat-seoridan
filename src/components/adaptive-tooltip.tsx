@@ -99,9 +99,10 @@ export const AdaptiveTooltip = ({
     const [isOpen, setIsOpen] = useState(false);
 
     // 호버가 불가능한 모든 환경(대부분의 모바일/태블릿)을 잡아냄
+    // useMediaQuery Hook을 사용하여 CSS 미디어 쿼리 상태를 구독
     const { matches: isTouchDevice, mounted } = useMediaQuery("(hover: none)");
 
-    // 마운트되기 전에는 트리거만 렌더링하여 불필요한 리렌더링 방지
+    // 마운트되기 전에는 트리거만 렌더링하여 불필요한 리렌더링 및 하이드레이션 불일치 방지
     if (!mounted) {
         return <div className={className}>{trigger}</div>;
     }

@@ -2,14 +2,37 @@ import { BottomNavigation } from "./bottom-navigation";
 import { Leaf, Phone, Award, Heart } from "lucide-react";
 import Link from "next/link";
 
+/**
+ * 앱 전체 레이아웃 Props
+ */
 interface AppLayoutProps {
+  /** 레이아웃 내부에 렌더링될 페이지 컨텐츠 */
   children: React.ReactNode;
 }
 
+/**
+ * AppLayout 컴포넌트
+ * 
+ * - 데스크탑/모바일 반응형 구조를 정의하는 최상위 레이아웃 컴포넌트입니다.
+ * - 모바일 퍼스트 디자인을 따르며, 데스크탑에서는 중앙 정렬된 모바일 뷰와 좌측 사이드바를 보여줍니다.
+ * 
+ * 주요 기능:
+ * 1. 데스크탑 뷰: 좌측 소개 사이드바 + 중앙 앱 화면
+ * 2. 모바일 뷰: 전체 화면 앱 (최대 너비 420px 고정)
+ * 3. 공통 헤더: 로고 및 타이틀 표시 (스크롤 시 고정)
+ * 4. 하단 네비게이션: 모바일 네비게이션 바 포함
+ * 
+ * 구조:
+ * - aside (hidden lg:flex): 데스크탑 전용 좌측 패널
+ * - main wrapper (w-full lg:w-[420px]): 실제 앱 컨텐츠 영역
+ */
 export function AppLayout({ children }: AppLayoutProps) {
   return (
     <div className="min-h-screen bg-linear-to-br from-green-50 via-white to-blue-50 flex justify-center">
-      {/* 좌측 사이드바 - 넓은 화면에서만 표시 */}
+      {/* 
+        좌측 사이드바 - 넓은 화면(lg 이상)에서만 표시 
+        서비스 소개, 특징, 고객센터 정보를 담고 있음
+      */}
       <aside className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-center sticky top-0 h-screen">
         <div className="w-full max-w-md">
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-100 p-8 space-y-6">
@@ -74,7 +97,10 @@ export function AppLayout({ children }: AppLayoutProps) {
         </div>
       </aside>
 
-      {/* 메인 컨텐츠 영역 - 420px 고정 */}
+      {/* 
+        메인 컨텐츠 영역 - 420px 고정 (모바일 뷰 시뮬레이션)
+        실제 앱 기능이 표시되는 영역
+      */}
       <div className="w-full lg:w-[420px] bg-white min-h-screen flex flex-col relative shadow-2xl">
         {/* 헤더 - 고정 위치 (오버스크롤에 영향받지 않음) */}
         <header className="fixed top-0 left-0 right-0 lg:left-auto lg:right-auto lg:w-[420px] bg-white/95 backdrop-blur-md border-b border-gray-200 z-50 px-5 py-4 shadow-sm">
@@ -90,18 +116,21 @@ export function AppLayout({ children }: AppLayoutProps) {
           </div>
         </header>
 
-        {/* 페이지 컨텐츠 - 오버스크롤 방지 */}
+        {/* 
+          페이지 컨텐츠 - 헤더와 바텀 네비게이션 높이만큼 여백 확보 
+          overscroll-none: 불필요한 바운스 효과 방지
+        */}
         <main className="flex-1 pt-[65px] pb-16 overscroll-none">
           <div className="overscroll-contain">
             {children}
           </div>
         </main>
 
-        {/* 하단 네비게이션 */}
+        {/* 하단 네비게이션 바 */}
         <BottomNavigation />
       </div>
 
-      {/* 우측 빈 공간 (대칭을 위해) */}
+      {/* 우측 빈 공간 (데스크탑 뷰에서 중앙 정렬을 위한 대칭 공간) */}
       <div className="hidden lg:block lg:flex-1" />
     </div>
   );
