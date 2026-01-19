@@ -4,7 +4,8 @@ import { scrapeProductPrices } from '@/lib/scraper';
 import prisma from '@/lib/prisma';
 
 // 크롤링 대상 설정
-const FRUITS = ['망고', '배', '딸기'];
+// const FRUITS = ['망고', '배', '딸기'];
+const FRUITS = ['망고'];
 
 const STORES = [
     // },
