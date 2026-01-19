@@ -14,7 +14,7 @@ const withPWA = withPWAInit({
 
 const nextConfig: NextConfig = {
   // Stagehand를 번들링에서 제외하여 Node.js 네이티브 모듈로 실행되게 함
-  serverExternalPackages: ["@browserbasehq/stagehand"],
+  serverExternalPackages: ["@browserbasehq/stagehand", "pino-pretty"],
 };
 
 export default withPWA(nextConfig);
