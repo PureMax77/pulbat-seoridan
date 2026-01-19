@@ -24,6 +24,7 @@ export async function scrapeProductPrices(
     const stagehand = new Stagehand({
         env: process.env.VERCEL ? "BROWSERBASE" : "LOCAL",
         model: "openai/gpt-5-mini",
+        disablePino: true,
 
         // 디버깅 옵션
         // verbose: 2,
