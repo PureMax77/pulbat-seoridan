@@ -4,10 +4,18 @@ import { scrapeProductPrices } from '@/lib/scraper';
 import prisma from '@/lib/prisma';
 
 // 크롤링 대상 설정
-// const FRUITS = ['망고', '배', '딸기'];
-const FRUITS = ['망고'];
+const FRUITS = ['망고', '배', '딸기'];
 
 const STORES = [
+    // {
+    //     name: 'Lottemart',
+    //     urlTemplate: (keyword: string) => `https://lottemartzetta.com/products/search?q=${encodeURIComponent(keyword)}`,
+    //     extractPrompt: ''
+    // }
+    // {
+    //     name: 'Homeplus',
+    //     urlTemplate: (keyword: string) => `https://front.homeplus.co.kr/search?entry=direct&keyword=${encodeURIComponent(keyword)}`,
+    //     extractPrompt: ''
     // },
     // {
     //     name: 'Coupang',
@@ -15,25 +23,15 @@ const STORES = [
     //     extractPrompt: ''
     // },
     // {
-    //     name: 'Lottemart',
-    //     urlTemplate: (keyword: string) => `https://lottemartzetta.com/products/search?q=${encodeURIComponent(keyword)}`,
+    //     name: 'Emart',
+    //     urlTemplate: (keyword: string) => `https://emart.ssg.com/search.ssg?query=${encodeURIComponent(keyword)}`,
     //     extractPrompt: ''
-    // }
-    {
-        name: 'Homeplus',
-        urlTemplate: (keyword: string) => `https://front.homeplus.co.kr/search?entry=direct&keyword=${encodeURIComponent(keyword)}`,
-        extractPrompt: '홈플러스 특화 프롬프트를 여기에 추가하세요'
-    },
-    {
-        name: 'Emart',
-        urlTemplate: (keyword: string) => `https://emart.ssg.com/search.ssg?query=${encodeURIComponent(keyword)}`,
-        extractPrompt: ''
-    },
-    {
-        name: 'Kurly',
-        urlTemplate: (keyword: string) => `https://www.kurly.com/search?sword=${encodeURIComponent(keyword)}`,
-        extractPrompt: ''
-    },
+    // },
+    // {
+    //     name: 'Kurly',
+    //     urlTemplate: (keyword: string) => `https://www.kurly.com/search?sword=${encodeURIComponent(keyword)}`,
+    //     extractPrompt: ''
+    // },
 ];
 
 export const dynamic = 'force-dynamic';

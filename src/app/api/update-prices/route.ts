@@ -9,9 +9,9 @@ export const maxDuration = 300; // Vercel Pro 최대 5분
 // 크롤링 대상 스토어 설정 (cron job과 동일하게 유지)
 const STORES = [
     {
-        name: 'Homeplus',
-        urlTemplate: (keyword: string) => `https://front.homeplus.co.kr/search?entry=direct&keyword=${encodeURIComponent(keyword)}`,
-        extractPrompt: '홈플러스 특화 프롬프트를 여기에 추가하세요'
+        name: 'Lottemart',
+        urlTemplate: (keyword: string) => `https://lottemartzetta.com/products/search?q=${encodeURIComponent(keyword)}`,
+        extractPrompt: ''
     },
     {
         name: 'Emart',
