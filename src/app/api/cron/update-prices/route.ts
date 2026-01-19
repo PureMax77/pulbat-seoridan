@@ -40,6 +40,13 @@ export const dynamic = 'force-dynamic';
 export const maxDuration = 300; // Vercel Pro 최대 5분, 필요에 따라 조정
 
 export async function GET(request: Request) {
+    // 비용 문제로 임시로 cron 작업 비활성화 (다시 활성화하려면 아래 주석 처리)
+    return NextResponse.json({
+        success: false,
+        message: 'Cron job is temporarily disabled',
+        timestamp: new Date().toISOString()
+    }, { status: 503 });
+
     // 실행 시간 측정 시작
     const startTime = Date.now();
     console.log(`[Cron Job] 시작: ${new Date().toISOString()}`);
