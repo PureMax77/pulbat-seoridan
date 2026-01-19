@@ -6,8 +6,9 @@ import { SeasonalBasket } from '@/app/(components)/SeasonalBasket';
 import { BestDealsSkeleton, CategoryComparisonSkeleton, SeasonalBasketSkeleton } from '@/app/(components)/Skeletons';
 import { getBestDeals, getCategoryComparison, getSeasonalBasketData } from '@/lib/actions/market-data';
 
-// Ensure fresh data on every request
-export const dynamic = 'force-dynamic';
+// 1시간마다 자동 재검증 (안전장치)
+// 크롤링 완료 시 cron API에서 revalidatePath()로 즉시 갱신됨
+export const revalidate = 3600;
 
 export default function Home() {
   const currentMonth = new Date().getMonth() + 1;

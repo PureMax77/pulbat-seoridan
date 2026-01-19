@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { scrapeProductPrices } from '@/lib/scraper';
 import prisma from '@/lib/prisma';
 
@@ -84,11 +85,16 @@ export async function GET(request: Request) {
         const totalDuration = ((Date.now() - startTime) / 1000).toFixed(2);
         console.log(`[Cron Job] 전체 완료: 총 ${totalDuration}초 소요`);
 
+        // 크롤링 완료 후 홈 페이지 캐시 갱신
+        revalidatePath('/');
+        console.log(`[Cron Job] 홈 페이지 캐시 갱신 완료`);
+
         return NextResponse.json({
             success: true,
             results,
             timestamp: new Date().toISOString(),
-            duration: `${totalDuration}초`
+            duration: `${totalDuration}초`,
+            revalidated: true
         });
     } catch (error) {
         const totalDuration = ((Date.now() - startTime) / 1000).toFixed(2);
