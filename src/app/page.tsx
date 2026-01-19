@@ -22,10 +22,9 @@ export default function Home() {
               <h2 className="text-xl font-bold">오늘의 베스트 딜</h2>
               <p className="text-xs text-gray-500">오늘 가장 할인율이 높은 알뜰 상품을 모았어요</p>
             </div>
-            <BestDealsSkeleton />
-            {/* <Suspense fallback={<BestDealsSkeleton />}>
+            <Suspense fallback={<BestDealsSkeleton />}>
               <BestDealsSection />
-            </Suspense> */}
+            </Suspense>
           </section>
 
           <section className="space-y-3">
@@ -33,10 +32,9 @@ export default function Home() {
               <h2 className="text-xl font-bold">카테고리별 마트 가격 비교</h2>
               <p className="text-xs text-gray-500">같은 과일, 어디서 사는 게 가장 저렴할까요?</p>
             </div>
-            <CategoryComparisonSkeleton />
-            {/* <Suspense fallback={<CategoryComparisonSkeleton />}>
-                <CategoryComparisonSection />
-              </Suspense> */}
+            <Suspense fallback={<CategoryComparisonSkeleton />}>
+              <CategoryComparisonSection />
+            </Suspense>
           </section>
 
           <section className="space-y-3">
@@ -44,10 +42,9 @@ export default function Home() {
               <h2 className="text-xl font-bold">{currentMonth}월 제철 과일 장바구니</h2>
               <p className="text-xs text-gray-500">지금 가장 맛있는 과일들을 한 번에 비교해보세요</p>
             </div>
-            <SeasonalBasketSkeleton />
-            {/* <Suspense fallback={<SeasonalBasketSkeleton />}>
-                <SeasonalBasketSection month={currentMonth} />
-              </Suspense> */}
+            <Suspense fallback={<SeasonalBasketSkeleton />}>
+              <SeasonalBasketSection month={currentMonth} />
+            </Suspense>
           </section>
 
         </div>
