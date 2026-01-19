@@ -2,11 +2,13 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CategoryBestItem } from '@/lib/actions/market-data';
 import { cn } from '@/lib/utils';
+import { ExternalLink } from 'lucide-react';
 
 interface CategoryComparisonProps {
   data: CategoryBestItem[];
@@ -70,7 +72,14 @@ export function CategoryComparison({ data }: CategoryComparisonProps) {
                     </div>
 
                     <div className="text-right shrink-0">
-                      <div className="font-bold text-base">{item.price.toLocaleString()}원</div>
+                      <div className="flex items-center justify-end gap-2">
+                        <span className="font-bold text-base">{item.price.toLocaleString()}원</span>
+                        {item.url && (
+                          <Link href={item.url} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary">
+                            <ExternalLink className="w-3.5 h-3.5" />
+                          </Link>
+                        )}
+                      </div>
                       <div className={cn(
                         "text-[11px]",
                         index === 0 ? "text-green-600 font-medium" : "text-gray-500"
