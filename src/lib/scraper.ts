@@ -17,7 +17,8 @@ export async function scrapeProductPrices(
     storeName: string,
     searchUrl: string,
     keyword: string,
-    storeSpecificPrompt?: string
+    storeSpecificPrompt?: string,
+    urlTemplate?: (productName: string) => string
 ) {
     console.log(`Starting scrape for ${storeName} - ${keyword}...`);
 
@@ -152,6 +153,12 @@ export async function scrapeProductPrices(
                 unitPrice = price / quantityCount;
             }
 
+            // URL이 없는 경우 urlTemplate을 사용하여 생성
+            let finalUrl = item.url ?? undefined;
+            if (!finalUrl && urlTemplate) {
+                finalUrl = urlTemplate(item.name);
+            }
+
             return {
                 storeName,
                 productName: item.name,
@@ -160,7 +167,7 @@ export async function scrapeProductPrices(
                 weight: weightInGrams,
                 quantity: quantityCount,
                 unitPrice: unitPrice ? parseFloat(unitPrice.toFixed(2)) : undefined,
-                url: item.url ?? undefined,
+                url: finalUrl,
                 keyword
             };
         });

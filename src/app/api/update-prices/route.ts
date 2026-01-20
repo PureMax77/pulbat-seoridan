@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
             console.log(`[Manual Update] 크롤링 시작: ${store.name} - ${fruitName}`);
 
             // 데이터 크롤링
-            const items = await scrapeProductPrices(store.name, url, fruitName, store.extractPrompt);
+            const items = await scrapeProductPrices(store.name, url, fruitName, store.extractPrompt, store.urlTemplate);
 
             if (items.length > 0) {
                 // 데이터베이스에 저장

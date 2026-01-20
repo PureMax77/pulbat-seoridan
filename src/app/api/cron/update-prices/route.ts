@@ -67,7 +67,7 @@ export async function GET(request: Request) {
                 console.log(`[Cron Job] 크롤링 시작: ${store.name} - ${fruit}`);
 
                 // 데이터 크롤링
-                const items = await scrapeProductPrices(store.name, url, fruit, store.extractPrompt);
+                const items = await scrapeProductPrices(store.name, url, fruit, store.extractPrompt, store.urlTemplate);
 
                 if (items.length > 0) {
                     // 데이터베이스에 저장
