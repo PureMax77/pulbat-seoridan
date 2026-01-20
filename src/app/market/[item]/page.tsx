@@ -36,25 +36,35 @@ export default function MarketDetailPage() {
     // 부류 코드 계산
     const categoryCode = itemCode ? getCategoryCode(itemCode) : "";
 
-    // 쿼리 파라미터에서 값 가져오기
-    const kindCodeFromQuery = searchParams.get("p_kindcode");
-    const rankCodeFromQuery = searchParams.get("p_productrankcode");
+    // 쿼리 파라미터 값을 상태로 저장 (URL이 변경되어도 유지하기 위함)
+    const [queryParams] = useState({
+        kindCode: searchParams.get("p_kindcode"),
+        rankCode: searchParams.get("p_productrankcode"),
+        countryCode: searchParams.get("p_countrycode"),
+    });
 
     // 기본값 계산: query가 없으면 첫 번째 품종과 등급 사용
     const availableKinds = kindsByItem[itemCode] || [];
     const defaultKind = availableKinds.length > 0 ? availableKinds[0] : null;
-    const selectedKindCode = kindCodeFromQuery || defaultKind?.code || "";
-    const selectedKind = availableKinds.find(kind => kind.code === selectedKindCode) || defaultKind;
+
+    // queryParams 사용
+    const selectedKindCode = queryParams.kindCode || defaultKind?.code || "";
+    // 안전한 비교를 위해 normalizeCode 사용
+    const selectedKind = availableKinds.find(kind => normalizeCode(kind.code) === normalizeCode(selectedKindCode)) || defaultKind;
 
     // 등급 기본값 계산 (품종에 따라 다를 수 있음)
-    const comboKey = selectedKindCode ? `${categoryCode}|${itemCode}|${selectedKindCode}` : "";
+    const currentKindCode = selectedKind?.code || "";
+    const comboKey = currentKindCode ? `${categoryCode}|${itemCode}|${currentKindCode}` : "";
+
     const availableRanks = comboKey && comboRetailRanksFlat[comboKey]
         ? comboRetailRanksFlat[comboKey]
         : ranks;
+
     const defaultRank = availableRanks.length > 0 ? availableRanks[0] : null;
-    const selectedRankCode = rankCodeFromQuery || defaultRank?.code || "";
-    const selectedRank = rankCodeFromQuery
-        ? (availableRanks.find(rank => normalizeCode(rank.code) === normalizeCode(rankCodeFromQuery)) || defaultRank)
+    const selectedRankCode = queryParams.rankCode || defaultRank?.code || "";
+
+    const selectedRank = queryParams.rankCode
+        ? (availableRanks.find(rank => normalizeCode(rank.code) === normalizeCode(queryParams.rankCode!)) || defaultRank)
         : defaultRank;
 
     // 초기값 계산 (렌더링 전에 계산)
@@ -63,7 +73,7 @@ export default function MarketDetailPage() {
     const initialRankName = selectedRank?.name || "";
 
     // state로 관리
-    const [countryCode, setCountryCode] = useState<string | null>(searchParams.get("p_countrycode"));
+    const [countryCode, setCountryCode] = useState<string | null>(queryParams.countryCode);
     const itemName = initialItemName;
     const kindName = initialKindName;
     const rankName = initialRankName;
