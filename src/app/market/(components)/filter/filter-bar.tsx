@@ -5,6 +5,7 @@ import { Filter, X, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { FilterChip } from "./filter-chip";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 /**
  * 필터 상태 인터페이스
@@ -32,6 +33,10 @@ interface FilterBarProps {
     className?: string;
     /** 필터 바 확장/축소 상태 변경 핸들러 */
     onExpandedChange?: (isExpanded: boolean) => void;
+    /** 현재 활성 탭 (소매/도매) */
+    activeTab: string;
+    /** 탭 변경 핸들러 */
+    onTabChange: (tab: string) => void;
 }
 
 /**
@@ -41,7 +46,7 @@ interface FilterBarProps {
  * - 필터 태그(Chip) 형태로 현재 상태를 시각화합니다.
  * - 필터 확장/축소 기능 및 초기화 기능을 제공합니다.
  */
-export function FilterBar({ filters, onFilterChange, onOpenBottomSheet, className, onExpandedChange }: FilterBarProps) {
+export function FilterBar({ filters, onFilterChange, onOpenBottomSheet, className, onExpandedChange, activeTab, onTabChange }: FilterBarProps) {
     const [isExpanded, setIsExpanded] = useState(true);
 
     // 초기 확장 상태를 부모에게 알림
@@ -78,25 +83,41 @@ export function FilterBar({ filters, onFilterChange, onOpenBottomSheet, classNam
 
     return (
         <div className={cn("w-full", className)}>
-            {/* 상단 헤더 영역: 필터 타이틀 및 펼치기/접기 버튼, 설정 버튼 */}
+            {/* 상단 헤더 영역: 탭 전환 및 펼치기/접기 버튼, 설정 버튼 */}
             <div className="flex items-center justify-between">
-                <Button
-                    onClick={toggleExpanded}
-                    variant="ghost"
-                    className="flex items-center gap-2 text-lg font-semibold px-0"
-                    aria-label={isExpanded ? "필터 접기" : "필터 펼치기"}
-                >
+                <div className="flex items-center gap-2">
                     {hasVisibleFilters && (
-                        <>
+                        <Button
+                            onClick={toggleExpanded}
+                            variant="ghost"
+                            size="icon"
+                            className="shrink-0 h-9 w-9"
+                            aria-label={isExpanded ? "필터 접기" : "필터 펼치기"}
+                        >
                             {isExpanded ? (
                                 <ChevronUp className="w-5 h-5" />
                             ) : (
                                 <ChevronDown className="w-5 h-5" />
                             )}
-                        </>
+                        </Button>
                     )}
-                    <span>필터</span>
-                </Button>
+                    <Tabs value={activeTab} onValueChange={onTabChange} className="w-auto">
+                        <TabsList className="h-9 bg-gray-200">
+                            <TabsTrigger 
+                                value="retail" 
+                                className="text-sm data-[state=active]:bg-gray-700 data-[state=active]:text-white data-[state=inactive]:text-gray-600"
+                            >
+                                소매
+                            </TabsTrigger>
+                            <TabsTrigger 
+                                value="wholesale" 
+                                className="text-sm data-[state=active]:bg-gray-700 data-[state=active]:text-white data-[state=inactive]:text-gray-600"
+                            >
+                                도매
+                            </TabsTrigger>
+                        </TabsList>
+                    </Tabs>
+                </div>
                 <Button
                     onClick={onOpenBottomSheet}
                     className="flex items-center gap-2 bg-linear-to-br from-blue-500 to-blue-600"
