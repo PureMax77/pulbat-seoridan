@@ -8,39 +8,40 @@ export function BestDealsSkeleton() {
       <div className="w-full h-2 bg-gray-100" />
       
       {/* 카드 영역 */}
-      <div className="w-full h-[120px] flex overflow-hidden">
-        <Card className="relative w-full h-full flex border-0 rounded-none shadow-none bg-white">
-          <CardContent className="py-2.5 px-7 flex gap-5 items-center w-full min-h-0">
-            {/* 좌측: 스토어 아이콘 */}
-            <div className="flex flex-col items-center justify-center gap-1.5 shrink-0">
-              <Skeleton className="w-12 h-12 rounded-full" />
-              <Skeleton className="h-3 w-[50px]" />
+      <Card className="relative w-full h-[120px] flex overflow-hidden border-0 rounded-none shadow-none bg-green-50">
+        <CardContent className="py-2.5 px-7 flex gap-5 items-center w-full min-h-0">
+          {/* 좌측: 스토어 정보 */}
+          <div className="flex flex-col items-center justify-center gap-1.5 shrink-0">
+            <Skeleton className="w-12 h-12 rounded-full" />
+            <Skeleton className="h-3 w-[50px]" />
+          </div>
+
+          {/* 우측: 상품 정보 */}
+          <div className="flex flex-col justify-center gap-2">
+            {/* 상품명 */}
+            <div className="space-y-1.5">
+              <Skeleton className="h-[14px] w-[180px]" />
+              <Skeleton className="h-[14px] w-[140px]" />
             </div>
 
-            {/* 우측: 상품 정보 */}
-            <div className="flex-1 flex flex-col justify-between min-w-0 py-1">
-              {/* 상품명 */}
-              <div className="space-y-1.5">
-                <Skeleton className="h-4 w-[70%]" />
-                <Skeleton className="h-4 w-[50%]" />
-              </div>
-
-              {/* 가격 정보 */}
+            {/* 가격 정보 */}
+            <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2">
-                <Skeleton className="h-6 w-[100px]" />
-                <Skeleton className="h-4 w-[60px]" />
+                <Skeleton className="h-[18px] w-[90px]" />
+                <Skeleton className="h-3 w-[60px]" />
                 <Skeleton className="h-5 w-[40px] rounded-md" />
               </div>
+              <Skeleton className="h-[10px] w-[100px]" />
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* 하단 구분선 */}
       <div className="w-full h-2 bg-gray-100" />
 
       {/* 페이지 번호 표시 */}
-      <div className="absolute bottom-4 right-7 z-10">
+      <div className="absolute bottom-4 right-4 z-10">
         <Skeleton className="h-5 w-[40px] rounded-md" />
       </div>
     </div>
