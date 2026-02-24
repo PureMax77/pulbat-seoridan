@@ -62,6 +62,10 @@ export default function MarketPage() {
   const [error, setError] = useState<string | null>(null);
   const [isFilterExpanded, setIsFilterExpanded] = useState(true);
 
+  // 소매/도매 검색어 상태를 분리하여 관리
+  const [retailSearchQuery, setRetailSearchQuery] = useState("");
+  const [wholesaleSearchQuery, setWholesaleSearchQuery] = useState("");
+
   // API 재요청이 필요한 필터 (지역만)
   const apiFilters = useMemo(() => ({
     countryCode: filters.countryCode?.code,
@@ -154,6 +158,15 @@ export default function MarketPage() {
     setFilters({ category: { code: "all", name: "전체 부류" } });
   };
 
+  // 탭에 따라 검색어를 분리하여 저장
+  const handleSearchChange = (query: string) => {
+    if (activeTab === "retail") {
+      setRetailSearchQuery(query);
+    } else {
+      setWholesaleSearchQuery(query);
+    }
+  };
+
   const handleFilterChange = (newFilters: FilterState) => {
     setFilters(newFilters);
   };
@@ -191,25 +204,27 @@ export default function MarketPage() {
               onExpandedChange={setIsFilterExpanded}
               activeTab={activeTab}
               onTabChange={handleTabChange}
+              onSearchChange={handleSearchChange}
             />
           </div>
         </div>
 
         {/* 필터 영역 높이만큼 여백 추가 */}
-        <div className={`shrink-0 ${isFilterExpanded && hasVisibleFilters ? "h-30" : "h-12"}`}></div>
+        <div className={`shrink-0 ${isFilterExpanded && hasVisibleFilters ? "h-34" : "h-12"}`}></div>
 
         {/* 메인 콘텐츠 */}
         <div className="max-w-4xl mx-auto p-4 flex-1 flex flex-col overflow-hidden w-full">
           {activeTab === "retail" ? (
-            <RetailContents 
-              filters={filters} 
+            <RetailContents
+              filters={filters}
               allPriceData={allPriceData}
               loading={loading}
               error={error}
               onRetry={fetchPriceData}
+              searchQuery={retailSearchQuery}
             />
           ) : (
-            <WholeSaleContents />
+            <WholeSaleContents searchQuery={wholesaleSearchQuery} />
           )}
         </div>
 

@@ -59,9 +59,11 @@ interface RetailContentsProps {
   loading: boolean;
   error: string | null;
   onRetry: () => void;
+  /** 검색어 (디바운스 적용된 값) */
+  searchQuery?: string;
 }
 
-export const RetailContents = ({ filters, allPriceData, loading, error, onRetry }: RetailContentsProps) => {
+export const RetailContents = ({ filters, allPriceData, loading, error, onRetry, searchQuery = "" }: RetailContentsProps) => {
   // 우선순위 품목 배열 (앞쪽에 표시될 품목들)
   const priorityItems = useMemo(() => ['배', '단감', '딸기', '레몬', '망고', '멜론', '바나나', '호박'], []);
 
@@ -107,6 +109,15 @@ export const RetailContents = ({ filters, allPriceData, loading, error, onRetry 
       });
     }
 
+    // 검색어 필터링 (품목명, 품종명 기준)
+    const trimmedQuery = searchQuery.trim();
+    if (trimmedQuery) {
+      filtered = filtered.filter(item =>
+        item.item_name.includes(trimmedQuery) ||
+        item.kind_name.includes(trimmedQuery)
+      );
+    }
+
     // 우선순위 품목을 앞쪽으로, 나머지는 한글 순서로 정렬
     filtered.sort((a, b) => {
       const aIndex = priorityItems.indexOf(a.item_name);
@@ -129,7 +140,7 @@ export const RetailContents = ({ filters, allPriceData, loading, error, onRetry 
     });
 
     return filtered;
-  }, [allPriceData, filters.category, filters.item, filters.kind, filters.rank, priorityItems]);
+  }, [allPriceData, filters.category, filters.item, filters.kind, filters.rank, priorityItems, searchQuery]);
 
   return (
     <>

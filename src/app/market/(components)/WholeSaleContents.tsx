@@ -3,7 +3,12 @@
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Package } from "lucide-react";
 
-export const WholeSaleContents = () => {
+interface WholeSaleContentsProps {
+  /** 검색어 (추후 도매 검색 기능 구현 시 활용) */
+  searchQuery?: string;
+}
+
+export const WholeSaleContents = ({ searchQuery: _searchQuery }: WholeSaleContentsProps) => {
   return (
     <>
       {/* 제목 영역 */}

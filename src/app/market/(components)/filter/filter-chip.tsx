@@ -31,7 +31,7 @@ export function FilterChip({ label, onRemove, className }: FilterChipProps) {
         <Badge
             variant="secondary"
             className={cn(
-                "inline-flex items-center gap-1 px-3 py-1.5 rounded-full",
+                "inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-green-50",
                 className
             )}
         >
